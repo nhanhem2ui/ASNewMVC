@@ -1,0 +1,173 @@
+@page "{id}"
+@model FUNewsManagement.Pages.NewsArticles.ReadNewsModel
+
+@{
+    ViewData["Title"] = Model.Article?.NewsTitle ?? "Article Not Found";
+}
+
+<style>
+    .article-container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .article-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 25px;
+    }
+
+    .article-title {
+        font-size: 40px;
+        font-weight: 700;
+        color: #1a1a1a;
+        line-height: 1.2;
+        margin-bottom: 15px;
+    }
+
+    .article-meta {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 14px;
+        color: #666666;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .meta-icon {
+        width: 16px;
+        height: 16px;
+        opacity: 0.7;
+    }
+
+    .meta-badge {
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-category {
+        background-color: #e0e7ff;
+        color: #4338ca;
+    }
+
+    .article-headline {
+        font-size: 20px;
+        font-weight: 400;
+        color: #444444;
+        margin-top: 25px;
+        line-height: 1.6;
+    }
+
+    .article-content {
+        font-size: 17px;
+        line-height: 1.8;
+        color: #333333;
+        margin-top: 30px;
+        white-space: pre-wrap; /* Preserve whitespace and newlines */
+    }
+
+    .article-tags {
+        margin-top: 30px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .tag-badge {
+        padding: 6px 14px;
+        background-color: #f3f4f6;
+        color: #4b5563;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 40px;
+        color: #1a1a1a;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+        .back-link:hover {
+            color: #555555;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+</style>
+
+@if (Model.Article != null)
+{
+    <div class="article-container">
+        <div class="article-header">
+            <h1 class="article-title">@Model.Article.NewsTitle</h1>
+
+            <div class="article-meta">
+                <div class="meta-item">
+                    <svg class="meta-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
+                    <span>@Model.Article.CreatedDate?.ToString("MMMM dd, yyyy")</span>
+                </div>
+                @if (Model.Article.CreatedBy != null)
+                {
+                    <div class="meta-item">
+                        <svg class="meta-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                        <span>By @Model.Article.CreatedBy.AccountName</span>
+                    </div>
+                }
+                @if (Model.Article.Category != null)
+                {
+                    <div class="meta-item">
+                        <span class="meta-badge badge-category">@Model.Article.Category.CategoryDesciption</span>
+                    </div>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Article.Headline))
+            {
+                <p class="article-headline">@Model.Article.Headline</p>
+            }
+        </div>
+
+        <div class="article-content">
+            @Model.Article.NewsContent
+        </div>
+
+        @if (Model.Article.Tags != null && Model.Article.Tags.Any())
+        {
+            <div class="article-tags">
+                @foreach (var tag in Model.Article.Tags)
+                {
+                    <span class="tag-badge">@tag.TagName</span>
+                }
+            </div>
+        }
+
+        <a asp-page="./Browse" class="back-link">← Back to Articles</a>
+    </div>
+}
+else
+{
+    <div class="empty-state">
+        <h2>Article Not Found</h2>
+        <p>Sorry, we couldn't find the article you were looking for.</p>
+        <a asp-page="./Browse" class="btn-filter">Browse Other Articles</a>
+    </div>
+}
