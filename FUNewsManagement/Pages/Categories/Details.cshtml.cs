@@ -1,7 +1,6 @@
-using System.Threading.Tasks;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BussinessObject;
 using Service;
 
 namespace FUNewsManagement.Pages.Categories
@@ -15,23 +14,20 @@ namespace FUNewsManagement.Pages.Categories
             _categoryService = categoryService;
         }
 
-      public Category Category { get; set; } = default!;
+        public Category Category { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(short? id)
+        public IActionResult OnGet(short? id)
         {
-            if (id == null || _categoryService == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var category = _categoryService.GetCategoryById(id.Value);
-            if (category == null)
+            Category = _categoryService.GetCategoryById(id.Value);
+
+            if (Category == null)
             {
                 return NotFound();
-            }
-            else 
-            {
-                Category = category;
             }
             return Page();
         }

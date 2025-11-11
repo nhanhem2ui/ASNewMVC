@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
+using BussinessObject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BussinessObject;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
 
 namespace FUNewsManagement.Pages.Categories
@@ -17,6 +17,7 @@ namespace FUNewsManagement.Pages.Categories
 
         public IActionResult OnGet()
         {
+            ViewData["ParentCategoryId"] = new SelectList(_categoryService.GetCategorys(), "CategoryId", "CategoryDesciption");
             return Page();
         }
 

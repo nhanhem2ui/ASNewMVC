@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
+using BussinessObject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BussinessObject;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
 
 namespace FUNewsManagement.Pages.Categories
@@ -16,34 +16,42 @@ namespace FUNewsManagement.Pages.Categories
         }
 
         [BindProperty]
-        public Category Category { get; set; } = default!;
+        public Category Category { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(short? id)
+        public IActionResult OnGet(short? id)
         {
-            if (id == null || _categoryService == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var category =  _categoryService.GetCategoryById(id.Value);
-            if (category == null)
+            Category = _categoryService.GetCategoryById(id.Value);
+
+            if (Category == null)
             {
                 return NotFound();
             }
-            Category = category;
+
+            ViewData["ParentCategoryId"] = new SelectList(_categoryService.GetCategorys(), "CategoryId", "CategoryDesciption");
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _categoryService.UpdateCategory(Category);
+            try
+            {
+                _categoryService.UpdateCategory(Category);
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "Failed to update category.");
+                return Page();
+            }
 
             return RedirectToPage("./Index");
         }

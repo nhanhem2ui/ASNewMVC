@@ -1,4 +1,4 @@
-using BussinessObject;
+using BussinessObject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
@@ -15,40 +15,39 @@ namespace FUNewsManagement.Pages.Categories
         }
 
         [BindProperty]
-        public Category Category { get; set; } = default!;
+        public Category Category { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(short? id)
+        public IActionResult OnGet(short? id)
         {
-            if (id == null || _categoryService == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var category = _categoryService.GetCategoryById(id.Value);
+            Category = _categoryService.GetCategoryById(id.Value);
 
-            if (category == null)
+            if (Category == null)
             {
                 return NotFound();
-            }
-            else
-            {
-                Category = category;
             }
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(short? id)
+        public IActionResult OnPost(short? id)
         {
-            if (id == null || _categoryService == null)
+            if (id == null)
             {
                 return NotFound();
             }
-            var category = _categoryService.GetCategoryById(id.Value);
 
-            if (category != null)
+            try
             {
-                Category = category;
-                _categoryService.DeleteCategory(Category.CategoryId);
+                _categoryService.DeleteCategory(id.Value);
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "Cannot delete this category because it is referenced by other records.");
+                return Page();
             }
 
             return RedirectToPage("./Index");

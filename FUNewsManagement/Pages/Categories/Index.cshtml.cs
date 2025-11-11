@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using BussinessObject.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using BussinessObject;
 using Service;
 
 namespace FUNewsManagement.Pages.Categories
@@ -16,11 +14,14 @@ namespace FUNewsManagement.Pages.Categories
             _categoryService = categoryService;
         }
 
-        public IList<Category> Category { get;set; } = default!;
+        public IList<Category> Category { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Category = (IList<Category>)_categoryService.GetCategorys();
+            if (_categoryService != null)
+            {
+                Category = _categoryService.GetCategorys();
+            }
         }
     }
 }
