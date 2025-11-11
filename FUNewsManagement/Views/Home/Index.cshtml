@@ -1,0 +1,510 @@
+﻿@model IEnumerable<BussinessObject.NewsArticle>
+@{
+    ViewData["Title"] = "Homepage";
+    var userRole = Context.Session.GetString("UserRole");
+    var searchTerm = ViewBag.SearchTerm as string;
+}
+
+<style>
+    .hero-section {
+        max-width: 1400px;
+        margin: 30px auto;
+        padding: 60px 40px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+        border-radius: 8px;
+        color: #ffffff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .hero-section h1 {
+            font-size: 42px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+    .search-container {
+        margin-bottom: 30px;
+        max-width: 600px;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 12px 20px;
+        font-size: 15px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        transition: all 0.2s ease;
+    }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+    .btn-search {
+        padding: 12px 28px;
+        background-color: #ffffff;
+        color: #1a1a1a;
+        border: none;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .btn-search:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+    .btn-clear {
+        padding: 12px 20px;
+        background-color: transparent;
+        color: #ffffff;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-clear:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+    .hero-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        padding: 12px 28px;
+        background-color: #ffffff;
+        color: #1a1a1a;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+        .btn-hero-primary:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+            color: #1a1a1a;
+        }
+
+    .btn-hero-secondary {
+        padding: 12px 28px;
+        background-color: transparent;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border: 2px solid #ffffff;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+        .btn-hero-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            color: #ffffff;
+        }
+
+    .search-info {
+        margin-bottom: 20px;
+        padding: 15px 20px;
+        background-color: #f5f5f5;
+        border-left: 4px solid #1a1a1a;
+        border-radius: 4px;
+    }
+
+        .search-info p {
+            margin: 0;
+            color: #333333;
+            font-size: 14px;
+        }
+
+        .search-info strong {
+            color: #1a1a1a;
+        }
+
+    .stats-section {
+        max-width: 1400px;
+        margin: 30px auto;
+        padding: 0 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .stat-card {
+        background-color: #ffffff;
+        padding: 30px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card h3 {
+            font-size: 36px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 14px;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+    .content-section {
+        max-width: 1400px;
+        margin: 30px auto;
+        padding: 0 40px;
+    }
+
+        .content-section h2 {
+            color: #1a1a1a;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .news-card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+    .news-card-content {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .news-card-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .news-card-content .headline {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+    .news-card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: #999999;
+        margin-bottom: 15px;
+    }
+
+    .news-card-category {
+        display: inline-block;
+        padding: 4px 10px;
+        background-color: #f5f5f5;
+        color: #333333;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .news-card-footer {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .tag-badge {
+        padding: 4px 10px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    .btn-read-more {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        align-self: flex-start;
+        margin-top: 15px;
+    }
+
+        .btn-read-more:hover {
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+    .view-all-section {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .btn-view-all {
+        padding: 12px 32px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+        .btn-view-all:hover {
+            background-color: #333333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            color: #ffffff;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666666;
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+    }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .hero-section
+
+    {
+        padding: 40px 20px;
+        margin: 20px;
+    }
+
+    .hero-section h1 {
+        font-size: 32px;
+    }
+
+    .hero-section p {
+        font-size: 16px;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .btn-search,
+    .btn-clear {
+        width: 100%;
+    }
+
+    .stats-section,
+    .content-section {
+        padding: 0 20px;
+        margin: 20px auto;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    }
+</style>
+
+<div class="hero-section">
+    <h1>Welcome to News Portal</h1>
+    <p>Stay informed with the latest news and updates. Explore articles across various categories and discover trending topics.</p>
+
+    <div class="search-container">
+        <form asp-action="Index" method="get" class="search-form">
+            <input type="text"
+                   name="searchTerm"
+                   value="@searchTerm"
+                   placeholder="Search articles by title, category, or tags..."
+                   class="search-input" />
+            <button type="submit" class="btn-search">Search</button>
+            @if (!string.IsNullOrEmpty(searchTerm))
+            {
+                <a asp-action="Index" class="btn-clear">Clear</a>
+            }
+        </form>
+    </div>
+
+    <div class="hero-buttons">
+        <a asp-controller="NewsArticles" asp-action="Browse" class="btn-hero-primary">Browse Articles</a>
+    </div>
+</div>
+
+<div class="stats-section">
+    <div class="stat-card">
+        <h3>@ViewBag.TotalArticles</h3>
+        <p>Total Articles</p>
+    </div>
+    <div class="stat-card">
+        <h3>@ViewBag.TotalCategories</h3>
+        <p>Categories</p>
+    </div>
+    <div class="stat-card">
+        <h3>@ViewBag.TotalTags</h3>
+        <p>Tags</p>
+    </div>
+    <div class="stat-card">
+        <h3>@ViewBag.ActiveArticles</h3>
+        <p>Active Articles</p>
+    </div>
+</div>
+
+<div class="content-section">
+    @if (!string.IsNullOrEmpty(searchTerm))
+    {
+        <div class="search-info">
+            <p>Search results for: <strong>"@searchTerm"</strong> - Found <strong>@Model.Count()</strong> article(s)</p>
+        </div>
+    }
+
+    <h2>@(string.IsNullOrEmpty(searchTerm) ? "Latest Articles" : "Search Results")</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="news-grid">
+            @foreach (var article in Model.Take(6))
+            {
+                <div class="news-card">
+                    <div class="news-card-content">
+                        <h3>@article.NewsTitle</h3>
+                        <p class="headline">@article.Headline</p>
+
+                        <div class="news-card-meta">
+                            <span>@article.CreatedDate?.ToString("MMM dd, yyyy")</span>
+                            @if (article.Category != null)
+                            {
+                                <span class="news-card-category">@article.Category.CategoryName</span>
+                            }
+                        </div>
+
+                        @if (article.Tags != null && article.Tags.Any())
+                        {
+                            <div class="news-card-footer">
+                                @foreach (var tag in article.Tags.Take(3))
+                                {
+                                    <span class="tag-badge">@tag.TagName</span>
+                                }
+                            </div>
+                        }
+
+                        <a asp-controller="NewsArticles" asp-action="Readnews" asp-route-id="@article.NewsArticleId" class="btn-read-more">Read More →</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.Count() > 6)
+        {
+            <div class="view-all-section">
+                <a asp-controller="NewsArticles" asp-action="Index" class="btn-view-all">View All Articles</a>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            @if (!string.IsNullOrEmpty(searchTerm))
+            {
+                <p>No articles found matching "@searchTerm".</p>
+                <a asp-action="Index" class="btn-hero-primary">Clear Search</a>
+            }
+            else
+            {
+                <p>No articles available yet.</p>
+                @if (userRole != "Lecturer")
+                {
+                    <a asp-controller="NewsArticles" asp-action="Create" class="btn-hero-primary">Create First Article</a>
+                }
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,218 @@
+﻿@model BussinessObject.SystemAccount
+@{
+    var role = ViewBag.UserRole as string;
+    ViewData["Title"] = "Edit";
+}
+
+<style>
+    .edit-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .edit-container h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .edit-container h4 {
+            color: #666666;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .edit-container hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            color: #333333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group p {
+            margin: 0;
+            padding: 12px 15px;
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            color: #666666;
+            font-size: 14px;
+        }
+
+            .form-group p strong {
+                color: #333333;
+                margin-right: 8px;
+            }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #d0d0d0;
+        background-color: #ffffff;
+        color: #1a1a1a;
+        font-size: 15px;
+        box-sizing: border-box;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #666666;
+            background-color: #fafafa;
+        }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .text-danger {
+        color: #d32f2f;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        padding: 12px 30px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border: none;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        margin-top: 10px;
+    }
+
+        .btn-primary:hover {
+            background-color: #333333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-secondary {
+        display: inline-block;
+        padding: 10px 24px;
+        background-color: #6b7280;
+        color: #ffffff;
+        text-decoration: none;
+        border: none;
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        margin-top: 20px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(107, 114, 128, 0.3);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+    input[type="checkbox"] {
+        width: auto;
+        margin-right: 8px;
+        cursor: pointer;
+    }
+
+    input[type="hidden"] {
+        display: none;
+    }
+</style>
+
+<div class="edit-container">
+    <h1>Edit</h1>
+    <h4>SystemAccount</h4>
+    <hr />
+
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="AccountId" />
+
+        <div class="form-group">
+            <label asp-for="AccountName" class="control-label"></label>
+            <input asp-for="AccountName" class="form-control" />
+            <span asp-validation-for="AccountName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="AccountEmail" class="control-label"></label>
+            <input asp-for="AccountEmail" class="form-control" />
+            <span asp-validation-for="AccountEmail" class="text-danger"></span>
+        </div>
+
+        @if (role == "Admin")
+        {
+            <div class="form-group">
+                <label asp-for="AccountRole" class="control-label"></label>
+                <input asp-for="AccountRole" class="form-control" />
+                <span asp-validation-for="AccountRole" class="text-danger"></span>
+            </div>
+        }
+        else
+        {
+            <input type="hidden" asp-for="AccountRole" />
+            <div class="form-group">
+                <p><strong>Role:</strong> @Model.AccountRole</p>
+            </div>
+        }
+
+        <div class="form-group">
+            <label asp-for="AccountPassword" class="control-label"></label>
+            <input asp-for="AccountPassword" class="form-control" type="password" />
+            <span asp-validation-for="AccountPassword" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <div>
+        @if (role == "Admin")
+        {
+            <a asp-action="Index" class="btn-secondary">← Back to List</a>
+        }
+        else
+        {
+            <a asp-controller="Home" asp-action="Index" class="btn-secondary">← Back to Home</a>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

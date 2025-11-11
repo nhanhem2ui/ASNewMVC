@@ -1,0 +1,107 @@
+﻿html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.btn-signout {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+}
+
+    .btn-signout:focus,
+    .btn-signout:active {
+        outline: none;
+        box-shadow: none;
+    }
+/* Base dropdown styles */
+.navbar-nav .dropdown-menu {
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    position: relative;
+}
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Multi-level dropdown styles */
+.dropdown-submenu {
+    position: relative;
+}
+
+    .dropdown-submenu > .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -1px;
+        margin-left: 0;
+    }
+
+    /* Arrow indicator for submenu */
+    .dropdown-submenu > .dropdown-item::after {
+        content: "›";
+        position: absolute;
+        right: 1rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        transition: transform 0.2s;
+    }
+
+    /* Show submenu on hover */
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu > .dropdown-item:hover::after {
+        transform: translateX(3px);
+    }
+
+/* Mobile responsiveness */
+@media (max-width: 767px) {
+    .dropdown-submenu > .dropdown-menu {
+        position: static;
+        float: none;
+        margin-left: 1rem;
+        box-shadow: none;
+        border-left: 2px solid #dee2e6;
+    }
+
+    .dropdown-submenu > .dropdown-item::after {
+        content: "▼";
+        font-size: 0.8rem;
+    }
+}
+
+/* Hover effect for nested items */
+.dropdown-menu .dropdown-menu .dropdown-item {
+    padding-left: 2rem;
+    font-size: 0.9rem;
+}

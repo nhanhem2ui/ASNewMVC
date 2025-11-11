@@ -1,0 +1,372 @@
+﻿@{
+    ViewData["Title"] = Model.NewsTitle;
+}
+@model BussinessObject.NewsArticle
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .article-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .article-header {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .article-category {
+        display: inline-block;
+        padding: 6px 14px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .article-title {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1a1a1a;
+        line-height: 1.2;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+    }
+
+    .article-headline {
+        font-size: 20px;
+        color: #666666;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        font-weight: 400;
+    }
+
+    .article-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+        font-size: 14px;
+        color: #666666;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .meta-icon {
+        color: #999999;
+    }
+
+    .article-body {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .article-content {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #333333;
+        font-family: Georgia, 'Times New Roman', serif;
+    }
+
+        .article-content p {
+            margin-bottom: 20px;
+        }
+
+    .article-footer {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .article-source {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-left: 4px solid #1a1a1a;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .article-source-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #666666;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .article-source-value {
+        font-size: 15px;
+        color: #1a1a1a;
+        font-weight: 500;
+    }
+
+    .article-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .tag-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #666666;
+        letter-spacing: 0.5px;
+        margin-right: 10px;
+    }
+
+    .tag-badge {
+        padding: 6px 14px;
+        background-color: #f0f0f0;
+        color: #333333;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+        .tag-badge:hover {
+            background-color: #e0e0e0;
+        }
+
+    .article-actions {
+        display: flex;
+        gap: 15px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-action {
+        padding: 10px 24px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-back {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+
+        .btn-back:hover {
+            background-color: #333333;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+    .btn-edit {
+        background-color: transparent;
+        color: #1a1a1a;
+        border: 2px solid #1a1a1a;
+    }
+
+        .btn-edit:hover {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+    .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .status-active {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-inactive {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .updated-info {
+        font-size: 13px;
+        color: #999999;
+        font-style: italic;
+        margin-top: 15px;
+    }
+
+    @@media (max-width: 768px) {
+        .article-container {
+            padding: 10px;
+        }
+
+        .article-header,
+        .article-body,
+        .article-footer {
+            padding: 25px;
+        }
+
+        .article-title {
+            font-size: 32px;
+        }
+
+        .article-headline {
+            font-size: 18px;
+        }
+
+        .article-content {
+            font-size: 16px;
+        }
+
+        .article-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .article-actions {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="article-container">
+    <!-- Article Header -->
+    <article class="article-header">
+        @if (Model.Category != null)
+        {
+            <div class="article-category">
+                @Model.Category.CategoryName
+            </div>
+        }
+
+        <h1 class="article-title">@Model.NewsTitle</h1>
+
+        @if (!string.IsNullOrEmpty(Model.Headline))
+        {
+            <p class="article-headline">@Model.Headline</p>
+        }
+
+        <div class="article-meta">
+            @if (Model.CreatedDate.HasValue)
+            {
+                <div class="meta-item">
+                    <span class="meta-icon">📅</span>
+                    <span>@Model.CreatedDate.Value.ToString("MMMM dd, yyyy")</span>
+                </div>
+            }
+
+            @if (Model.CreatedBy != null)
+            {
+                <div class="meta-item">
+                    <span class="meta-icon">✍️</span>
+                    <span>By @(Model.CreatedBy.AccountName ?? $"User {Model.CreatedBy.AccountId}")</span>
+                </div>
+            }
+
+            <div class="meta-item">
+                @if (Model.NewsStatus == true)
+                {
+                    <span class="status-indicator status-active">
+                        <span>●</span> Published
+                    </span>
+                }
+                else
+                {
+                    <span class="status-indicator status-inactive">
+                        <span>●</span> Unpublished
+                    </span>
+                }
+            </div>
+        </div>
+    </article>
+
+    <!-- Article Body -->
+    <div class="article-body">
+        <div class="article-content">
+            @if (!string.IsNullOrEmpty(Model.NewsContent))
+            {
+                @Html.Raw(Model.NewsContent.Replace("\n", "<br />"))
+            }
+            else
+            {
+                <p style="color: #999999; font-style: italic;">No content available for this article.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Article Footer -->
+    <div class="article-footer">
+        @if (!string.IsNullOrEmpty(Model.NewsSource))
+        {
+            <div class="article-source">
+                <div class="article-source-label">Source</div>
+                <div class="article-source-value">@Model.NewsSource</div>
+            </div>
+        }
+
+        @if (Model.Tags != null && Model.Tags.Any())
+        {
+            <div class="article-tags">
+                <span class="tag-label">Tags:</span>
+                @foreach (var tag in Model.Tags)
+                {
+                    <span class="tag-badge">@tag.TagName</span>
+                }
+            </div>
+        }
+
+        @if (Model.ModifiedDate.HasValue)
+        {
+            <div class="updated-info">
+                Last updated: @Model.ModifiedDate.Value.ToString("MMMM dd, yyyy 'at' h:mm tt")
+            </div>
+        }
+
+        <div class="article-actions">
+            <a asp-action="Index" asp-controller="Home" class="btn-action btn-back">
+                ← Back to Home
+            </a>
+            @{
+                var userRole = Context.Session.GetString("UserRole");
+                if (userRole != "Lecturer")
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.NewsArticleId" class="btn-action btn-edit">
+                        ✏️ Edit Article
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>
