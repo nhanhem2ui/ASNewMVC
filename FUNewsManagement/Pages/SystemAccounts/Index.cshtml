@@ -1,0 +1,56 @@
+@page
+@model FUNewsManagement.Pages.SystemAccounts.IndexModel
+
+@{
+    ViewData["Title"] = "System Accounts";
+}
+
+<h1>System Accounts</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<form>
+    <p>
+        Filter: <input type="text" name="filter" value="@Model.CurrentFilter" />
+        <input type="submit" value="Search" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAccounts[0].AccountName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAccounts[0].AccountEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAccounts[0].AccountRole)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.SystemAccounts) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountRole)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.AccountId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.AccountId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.AccountId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

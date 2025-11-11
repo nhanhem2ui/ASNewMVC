@@ -8,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSession();
+builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
+{
+    options.Conventions.AddPageRoute("/Auth/Login", "");
+});
 
 builder.Services.AddSession(options =>
 {
@@ -33,7 +36,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<TagDAO>();
 builder.Services.AddScoped<CategoryDAO>();
-builder.Services.AddScoped<SystemAccountDAO>();
+builder.Services.A_sddScoped<SystemAccountDAO>();
 builder.Services.AddScoped<NewsArticleDAO>();
 
 builder.Services.AddScoped<ITagRepository, TagRepository>();
@@ -59,7 +62,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -72,8 +75,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-     pattern: "{controller=Auth}/{action=Login}/{id?}");
+app.MapRazorPages();
+app.MapControllers();
 
 app.Run();
