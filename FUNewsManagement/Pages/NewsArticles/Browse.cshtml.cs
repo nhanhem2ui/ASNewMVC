@@ -3,17 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FUNewsManagement.Pages.NewsArticles
 {
     public class BrowseModel : PageModel
     {
-        private readonly INewsArticaleService _newsService;
+        private readonly INewsArticleService _newsService;
         private readonly ICategoryService _categoryService;
 
-        public BrowseModel(INewsArticaleService newsService, ICategoryService categoryService)
+        public BrowseModel(INewsArticleService newsService, ICategoryService categoryService)
         {
             _newsService = newsService;
             _categoryService = categoryService;

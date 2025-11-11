@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using BussinessObject.Models;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
@@ -16,7 +13,7 @@ namespace FUNewsManagement.Pages.Tags
             _tagService = tagService;
         }
 
-        public IList<Tag> Tag { get;set; } = default!;
+        public IList<Tag> Tag { get; set; } = default!;
 
         public async Task OnGetAsync()
         {

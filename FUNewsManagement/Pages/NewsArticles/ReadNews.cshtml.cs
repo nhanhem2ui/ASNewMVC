@@ -7,9 +7,9 @@ namespace FUNewsManagement.Pages.NewsArticles
 {
     public class ReadNewsModel : PageModel
     {
-        private readonly INewsArticaleService _newsService;
+        private readonly INewsArticleService _newsService;
 
-        public ReadNewsModel(INewsArticaleService newsService)
+        public ReadNewsModel(INewsArticleService newsService)
         {
             _newsService = newsService;
         }

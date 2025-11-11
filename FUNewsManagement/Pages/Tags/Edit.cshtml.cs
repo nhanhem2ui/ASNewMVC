@@ -1,7 +1,6 @@
-using System.Threading.Tasks;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BussinessObject.Models;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
@@ -25,7 +24,7 @@ namespace FUNewsManagement.Pages.Tags
                 return NotFound();
             }
 
-            var tag =  _tagService.GetTagById(id.Value);
+            var tag = _tagService.GetTagById(id.Value);
             if (tag == null)
             {
                 return NotFound();

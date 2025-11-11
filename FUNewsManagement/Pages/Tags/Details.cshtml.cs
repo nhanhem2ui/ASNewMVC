@@ -1,7 +1,6 @@
-using System.Threading.Tasks;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BussinessObject.Models;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
@@ -15,7 +14,7 @@ namespace FUNewsManagement.Pages.Tags
             _tagService = tagService;
         }
 
-      public Tag Tag { get; set; } = default!;
+        public Tag Tag { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,7 +28,7 @@ namespace FUNewsManagement.Pages.Tags
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Tag = tag;
             }

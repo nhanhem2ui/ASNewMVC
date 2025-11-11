@@ -1,5 +1,4 @@
-using BussinessObject.Models;
-using Microsoft.AspNetCore.Mvc;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
 
