@@ -1,4 +1,4 @@
-using BusinessObjects;
+using BussinessObject;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -29,7 +29,7 @@ namespace FUNewsManagement.Pages.SystemAccounts
             {
                 return Page();
             }
-
+            
             if (!string.IsNullOrWhiteSpace(SystemAccount.AccountPassword))
             {
                 var hasher = new PasswordHasher<object>();

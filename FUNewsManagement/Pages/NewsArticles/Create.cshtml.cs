@@ -1,11 +1,8 @@
-using BusinessObjects;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 
 namespace FUNewsManagement.Pages.NewsArticles
@@ -35,10 +32,10 @@ namespace FUNewsManagement.Pages.NewsArticles
             }
             return 0;
         }
-        
+
         public IActionResult OnGet()
         {
-            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryDesciption");
+            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategorys(), "CategoryId", "CategoryDesciption");
             ViewData["AllTags"] = new MultiSelectList(_tagService.GetTags(), "TagId", "TagName");
             return Page();
         }
@@ -53,11 +50,11 @@ namespace FUNewsManagement.Pages.NewsArticles
 
             if (!ModelState.IsValid)
             {
-                ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryDesciption");
+                ViewData["CategoryId"] = new SelectList(_categoryService.GetCategorys(), "CategoryId", "CategoryDesciption");
                 ViewData["AllTags"] = new MultiSelectList(_tagService.GetTags(), "TagId", "TagName");
                 return Page();
             }
-            
+
             var currentUserId = GetCurrentUserId();
 
             NewsArticle.NewsArticleId = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(100, 999);

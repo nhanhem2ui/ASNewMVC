@@ -1,7 +1,6 @@
-using System.Threading.Tasks;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using BussinessObject;
 using Service;
 
 namespace FUNewsManagement.Pages.Categories
@@ -31,7 +30,7 @@ namespace FUNewsManagement.Pages.Categories
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 Category = category;
             }

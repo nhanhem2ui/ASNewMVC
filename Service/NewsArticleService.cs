@@ -3,7 +3,7 @@ using Repository;
 
 namespace Service
 {
-    public class NewsArticleService : INewsArticaleService
+    public class NewsArticleService : INewsArticleService
     {
         private readonly INewsArticleRepository iNewsArticleRepository;
 

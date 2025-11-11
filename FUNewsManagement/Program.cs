@@ -1,4 +1,5 @@
 using DataAccess;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Repository;
@@ -20,11 +21,15 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Configure Authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
 })
 .AddGoogle(options =>
 {
@@ -34,9 +39,10 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
 });
 
+
 builder.Services.AddScoped<TagDAO>();
 builder.Services.AddScoped<CategoryDAO>();
-builder.Services.A_sddScoped<SystemAccountDAO>();
+builder.Services.AddScoped<SystemAccountDAO>();
 builder.Services.AddScoped<NewsArticleDAO>();
 
 builder.Services.AddScoped<ITagRepository, TagRepository>();
@@ -47,15 +53,8 @@ builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISystemAccountService, SystemAccountService>();
-builder.Services.AddScoped<INewsArticaleService, NewsArticleService>();
+builder.Services.AddScoped<INewsArticleService, NewsArticleService>();
 
-builder.Services.AddAuthentication("Cookies")
-
-    .AddCookie("Cookies", options =>
-    {
-        options.LoginPath = "/Auth/Login";
-        options.AccessDeniedPath = "/Auth/AccessDenied";
-    });
 
 var app = builder.Build();
 
@@ -74,6 +73,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapRazorPages();
 app.MapControllers();

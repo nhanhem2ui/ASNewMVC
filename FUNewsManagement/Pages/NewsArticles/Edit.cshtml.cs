@@ -1,10 +1,8 @@
-using BusinessObjects;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Service;
-using System;
-using System.Linq;
 using System.Security.Claims;
 
 namespace FUNewsManagement.Pages.NewsArticles
@@ -54,7 +52,7 @@ namespace FUNewsManagement.Pages.NewsArticles
                 return RedirectToPage("./Index");
             }
 
-            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryDesciption", NewsArticle.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_categoryService.GetCategorys(), "CategoryId", "CategoryDesciption", NewsArticle.CategoryId);
             ViewData["AllTags"] = new MultiSelectList(_tagService.GetTags(), "TagId", "TagName", NewsArticle.Tags?.Select(t => t.TagId));
 
             return Page();
@@ -72,24 +70,24 @@ namespace FUNewsManagement.Pages.NewsArticles
 
             if (!ModelState.IsValid)
             {
-                ViewData["CategoryId"] = new SelectList(_categoryService.GetCategories(), "CategoryId", "CategoryDesciption", NewsArticle.CategoryId);
+                ViewData["CategoryId"] = new SelectList(_categoryService.GetCategorys(), "CategoryId", "CategoryDesciption", NewsArticle.CategoryId);
                 ViewData["AllTags"] = new MultiSelectList(_tagService.GetTags(), "TagId", "TagName", selectedTags);
                 return Page();
             }
-            
+
             var currentUserId = GetCurrentUserId();
             NewsArticle.UpdatedById = currentUserId;
             NewsArticle.ModifiedDate = DateTime.Now;
 
             if (selectedTags is { Length: > 0 })
-                {
-                    var tags = _tagService.GetTags();
-                    NewsArticle.Tags = tags.Where(t => selectedTags.Contains(t.TagId)).ToList();
-                }
-                else
-                {
-                    NewsArticle.Tags = new System.Collections.Generic.List<Tag>();
-                }
+            {
+                var tags = _tagService.GetTags();
+                NewsArticle.Tags = tags.Where(t => selectedTags.Contains(t.TagId)).ToList();
+            }
+            else
+            {
+                NewsArticle.Tags = new List<Tag>();
+            }
 
             _newsArticleService.UpdateNewsArticle(NewsArticle);
 

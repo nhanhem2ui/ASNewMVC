@@ -1,13 +1,8 @@
 ﻿using BussinessObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
-    public interface INewsArticaleService
+    public interface INewsArticleService
     {
         void SaveNewsArticle(NewsArticle p);
         void DeleteNewsArticle(string id);

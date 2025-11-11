@@ -1,10 +1,6 @@
-using BusinessObjects;
-using Microsoft.AspNetCore.Mvc;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FUNewsManagement.Pages.SystemAccounts
 {

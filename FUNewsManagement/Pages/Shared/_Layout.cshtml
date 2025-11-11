@@ -4,9 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FU News</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FUNewsManagement.styles.css" asp-append-version="true" />
+
     <style>
         /* Base dropdown styles */
         .navbar-nav .dropdown-menu {
@@ -36,10 +38,8 @@
                 top: 0;
                 left: 100%;
                 margin-top: -1px;
-                margin-left: 0;
             }
 
-            /* Arrow indicator for submenu */
             .dropdown-submenu > .dropdown-item::after {
                 content: "›";
                 position: absolute;
@@ -49,7 +49,6 @@
                 transition: transform 0.2s;
             }
 
-            /* Show submenu on hover */
             .dropdown-submenu:hover > .dropdown-menu {
                 display: block;
             }
@@ -64,7 +63,6 @@
 
         {
             position: static;
-            float: none;
             margin-left: 1rem;
             box-shadow: none;
             border-left: 2px solid #dee2e6;
@@ -82,54 +80,65 @@
             padding-left: 2rem;
             font-size: 0.9rem;
         }
+
+        .btn-signout {
+            border: none;
+            background: none;
+            color: #000;
+            padding: 0;
+            cursor: pointer;
+        }
+
+            .btn-signout:hover {
+                text-decoration: underline;
+            }
     </style>
 </head>
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FU News</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-page="/Index">FU News</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-page="/Index">Home</a>
                         </li>
 
                         @if (!User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
+                                <a class="nav-link text-dark" asp-page="/Auth/Login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Register">Register</a>
+                                <a class="nav-link text-dark" asp-page="/Auth/Register">Register</a>
                             </li>
                         }
-
-                        @if (User.Identity.IsAuthenticated)
+                        else
                         {
-                            <!-- News Articles Dropdown với Multi-level -->
+                            <!-- News Articles Dropdown -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-dark" href="#" id="newsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     News Articles
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="newsDropdown">
-                                    <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Index">Manage Articles</a></li>
+                                    <li><a class="dropdown-item" asp-page="/NewsArticles/Index">Manage Articles</a></li>
 
-                                    <!-- Submenu: Browse & View -->
                                     <li class="dropdown-submenu">
                                         <a class="dropdown-item" href="#">Browse & View</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Browse">Browse All</a></li>
-                                            <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Browse" asp-route-sortBy="newest">Latest Articles</a></li>
-                                            <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Browse" asp-route-sortBy="title">By Title</a></li>
+                                            <li><a class="dropdown-item" asp-page="/NewsArticles/Browse">Browse All</a></li>
+                                            <li><a class="dropdown-item" asp-page="/NewsArticles/Browse" asp-route-sortBy="newest">Latest Articles</a></li>
+                                            <li><a class="dropdown-item" asp-page="/NewsArticles/Browse" asp-route-sortBy="title">By Title</a></li>
                                         </ul>
                                     </li>
 
-                                    <!-- Submenu: Filter by Category -->
                                     <li class="dropdown-submenu">
                                         <a class="dropdown-item" href="#">By Category</a>
                                         <ul class="dropdown-menu">
@@ -137,41 +146,42 @@
                                             {
                                                 @foreach (var cat in ViewBag.Categories)
                                                 {
-                                                    <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Browse" asp-route-categoryId="@cat.CategoryId">@cat.CategoryName</a></li>
+                                                    <li>
+                                                        <a class="dropdown-item" asp-page="/NewsArticles/Browse"
+                                                           asp-route-categoryId="@cat.CategoryId">@cat.CategoryName</a>
+                                                    </li>
                                                 }
                                             }
                                             else
                                             {
-                                                <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Browse">All Categories</a></li>
+                                                <li><a class="dropdown-item" asp-page="/NewsArticles/Browse">All Categories</a></li>
                                             }
                                         </ul>
                                     </li>
 
-                                    <li><hr class="dropdown-divider"></li>
+                                    <li><hr class="dropdown-divider" /></li>
 
                                     @if (User.IsInRole("Admin") || User.IsInRole("Staff") || User.IsInRole("Lecturer"))
                                     {
-                                        <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Create">Create New Article</a></li>
+                                        <li><a class="dropdown-item" asp-page="/NewsArticles/Create">Create New Article</a></li>
                                     }
 
                                     @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
                                     {
-                                        <li><hr class="dropdown-divider"></li>
-
-                                        <!-- Submenu: Reports & Analytics -->
+                                        <li><hr class="dropdown-divider" /></li>
                                         <li class="dropdown-submenu">
                                             <a class="dropdown-item" href="#">Reports & Analytics</a>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Report">Full Report</a></li>
-                                                <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Report" asp-route-sortOrder="asc">By Date (Asc)</a></li>
-                                                <li><a class="dropdown-item" asp-controller="NewsArticles" asp-action="Report" asp-route-sortOrder="desc">By Date (Desc)</a></li>
+                                                <li><a class="dropdown-item" asp-page="/NewsArticles/Report">Full Report</a></li>
+                                                <li><a class="dropdown-item" asp-page="/NewsArticles/Report" asp-route-sortOrder="asc">By Date (Asc)</a></li>
+                                                <li><a class="dropdown-item" asp-page="/NewsArticles/Report" asp-route-sortOrder="desc">By Date (Desc)</a></li>
                                             </ul>
                                         </li>
                                     }
                                 </ul>
                             </li>
 
-                            <!-- System Accounts Dropdown - Admin & Staff only -->
+                            <!-- System Accounts -->
                             @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
                             {
                                 <li class="nav-item dropdown">
@@ -181,57 +191,54 @@
                                     <ul class="dropdown-menu" aria-labelledby="accountsDropdown">
                                         @if (User.IsInRole("Admin"))
                                         {
-                                            <li><a class="dropdown-item" asp-controller="SystemAccounts" asp-action="Index">All Accounts</a></li>
-                                            <li><a class="dropdown-item" asp-controller="SystemAccounts" asp-action="Create">Create Account</a></li>
-                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item" asp-page="/SystemAccounts/Index">All Accounts</a></li>
+                                            <li><a class="dropdown-item" asp-page="/SystemAccounts/Create">Create Account</a></li>
+                                            <li><hr class="dropdown-divider" /></li>
                                         }
 
-                                        <!-- Submenu: Search & Filter -->
                                         <li class="dropdown-submenu">
                                             <a class="dropdown-item" href="#">Search Accounts</a>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" asp-controller="SystemAccounts" asp-action="Index">View All</a></li>
-                                                <li><a class="dropdown-item" asp-controller="SystemAccounts" asp-action="Index" asp-route-filter="admin">Search Admins</a></li>
-                                                <li><a class="dropdown-item" asp-controller="SystemAccounts" asp-action="Index" asp-route-filter="staff">Search Staff</a></li>
-                                                <li><a class="dropdown-item" asp-controller="SystemAccounts" asp-action="Index" asp-route-filter="lecturer">Search Lecturers</a></li>
+                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index">View All</a></li>
+                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-filter="admin">Search Admins</a></li>
+                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-filter="staff">Search Staff</a></li>
+                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-filter="lecturer">Search Lecturers</a></li>
                                             </ul>
                                         </li>
                                     </ul>
                                 </li>
                             }
 
-                            <!-- Categories Dropdown -->
+                            <!-- Categories -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-dark" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Categories
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                                    <li><a class="dropdown-item" asp-controller="Categories" asp-action="Index">All Categories</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Categories" asp-action="Create">Create Category</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Categories/Index">All Categories</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Categories/Create">Create Category</a></li>
                                 </ul>
                             </li>
 
-                            <!-- Tags Dropdown -->
+                            <!-- Tags -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-dark" href="#" id="tagsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Tags
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="tagsDropdown">
-                                    <li><a class="dropdown-item" asp-controller="Tags" asp-action="Index">All Tags</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Tags/Index">All Tags</a></li>
 
                                     @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
                                     {
-                                        <li><a class="dropdown-item" asp-controller="Tags" asp-action="Create">Create Tag</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-page="/Tags/Create">Create Tag</a></li>
+                                        <li><hr class="dropdown-divider" /></li>
                                     }
                                 </ul>
                             </li>
 
                             <li class="nav-item">
-                                <form class="nav-link text-dark" asp-controller="Auth" asp-action="Logout" method="post">
-                                    <button type="submit" class="btn-signout">
-                                        Sign out
-                                    </button>
+                                <form asp-page="/Auth/Logout" method="post" class="nav-link">
+                                    <button type="submit" class="btn-signout">Sign out</button>
                                 </form>
                             </li>
                         }
@@ -240,30 +247,31 @@
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - FU News - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - FU News - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (window.innerWidth < 768) {
                 const submenuItems = document.querySelectorAll('.dropdown-submenu > .dropdown-item');
-
                 submenuItems.forEach(item => {
-                    item.addEventListener('click', function(e) {
+                    item.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-
                         const submenu = this.nextElementSibling;
                         if (submenu && submenu.classList.contains('dropdown-menu')) {
                             submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';

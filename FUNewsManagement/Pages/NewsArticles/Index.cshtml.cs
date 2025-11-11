@@ -1,8 +1,6 @@
-using BusinessObjects;
+using BussinessObject;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FUNewsManagement.Pages.NewsArticles
 {
