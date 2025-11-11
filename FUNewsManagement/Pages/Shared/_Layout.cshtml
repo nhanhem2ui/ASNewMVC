@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -60,7 +60,6 @@
         /* Mobile responsiveness */
         @@media (max-width: 767px) {
             .dropdown-submenu > .dropdown-menu
-
         {
             position: static;
             margin-left: 1rem;
@@ -131,7 +130,7 @@
                                     <li><a class="dropdown-item" asp-page="/NewsArticles/Index">Manage Articles</a></li>
 
                                     <li class="dropdown-submenu">
-                                        <a class="dropdown-item" href="#">Browse & View</a>
+                                        <a class="dropdown-item" href="javascript:void(0);">Browse & View</a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" asp-page="/NewsArticles/Browse">Browse All</a></li>
                                             <li><a class="dropdown-item" asp-page="/NewsArticles/Browse" asp-route-sortBy="newest">Latest Articles</a></li>
@@ -140,7 +139,7 @@
                                     </li>
 
                                     <li class="dropdown-submenu">
-                                        <a class="dropdown-item" href="#">By Category</a>
+                                        <a class="dropdown-item" href="javascript:void(0);">By Category</a>
                                         <ul class="dropdown-menu">
                                             @if (ViewBag.Categories != null)
                                             {
@@ -170,7 +169,7 @@
                                     {
                                         <li><hr class="dropdown-divider" /></li>
                                         <li class="dropdown-submenu">
-                                            <a class="dropdown-item" href="#">Reports & Analytics</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Reports & Analytics</a>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" asp-page="/NewsArticles/Report">Full Report</a></li>
                                                 <li><a class="dropdown-item" asp-page="/NewsArticles/Report" asp-route-sortOrder="asc">By Date (Asc)</a></li>
@@ -197,12 +196,12 @@
                                         }
 
                                         <li class="dropdown-submenu">
-                                            <a class="dropdown-item" href="#">Search Accounts</a>
+                                            <a class="dropdown-item" href="javascript:void(0);">Search Accounts</a>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item" asp-page="/SystemAccounts/Index">View All</a></li>
-                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-filter="admin">Search Admins</a></li>
-                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-filter="staff">Search Staff</a></li>
-                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-filter="lecturer">Search Lecturers</a></li>
+                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-searchString="admin">Search Admins</a></li>
+                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-searchString="staff">Search Staff</a></li>
+                                                <li><a class="dropdown-item" asp-page="/SystemAccounts/Index" asp-route-searchString="lecturer">Search Lecturers</a></li>
                                             </ul>
                                         </li>
                                     </ul>

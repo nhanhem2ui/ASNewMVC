@@ -1,0 +1,21 @@
+@page "{id:int}"
+@model FUNewsManagement.Pages.Tags.DetailsModel
+
+@{
+    ViewData["Title"] = "Tag Details";
+}
+
+<div class="container-fluid">
+    <h1>Tag Details</h1>
+    <hr />
+    <div>
+        <dl class="row">
+            <dt class="col-sm-3 col-md-2">@Html.DisplayNameFor(model => model.Tag.TagName)</dt>
+            <dd class="col-sm-9 col-md-10">@Html.DisplayFor(model => model.Tag.TagName)</dd>
+        </dl>
+    </div>
+    <div class="mt-4">
+        <a asp-page="./Edit" asp-route-id="@Model.Tag.TagId" class="btn btn-primary">Edit</a>
+        <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

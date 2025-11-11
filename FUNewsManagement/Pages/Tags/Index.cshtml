@@ -1,0 +1,40 @@
+@page
+@model FUNewsManagement.Pages.Tags.IndexModel
+
+@{
+    ViewData["Title"] = "Tags";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Tags</h1>
+        <a asp-page="Create" class="btn btn-primary">Create New</a>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Tag[0].TagName)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model.Tag) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TagName)
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a asp-page="./Edit" asp-route-id="@item.TagId" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a asp-page="./Details" asp-route-id="@item.TagId" class="btn btn-sm btn-outline-info">Details</a>
+                        <a asp-page="./Delete" asp-route-id="@item.TagId" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>
+</div>

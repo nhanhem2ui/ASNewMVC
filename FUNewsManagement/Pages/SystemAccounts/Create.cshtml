@@ -2,46 +2,50 @@
 @model FUNewsManagement.Pages.SystemAccounts.CreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create System Account";
 }
 
-<h1>Create</h1>
+<div class="container-fluid">
+    <h1>Create System Account</h1>
 
-<h4>System Account</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountName" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountName" class="form-control" />
-                <span asp-validation-for="SystemAccount.AccountName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountEmail" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountEmail" class="form-control" />
-                <span asp-validation-for="SystemAccount.AccountEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountPassword" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountPassword" class="form-control" type="password" />
-                <span asp-validation-for="SystemAccount.AccountPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountRole" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountRole" class="form-control" />
-                <span asp-validation-for="SystemAccount.AccountRole" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="SystemAccount.AccountName" class="form-label"></label>
+                    <input asp-for="SystemAccount.AccountName" class="form-control" />
+                    <span asp-validation-for="SystemAccount.AccountName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SystemAccount.AccountEmail" class="form-label"></label>
+                    <input asp-for="SystemAccount.AccountEmail" class="form-control" />
+                    <span asp-validation-for="SystemAccount.AccountEmail" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SystemAccount.AccountPassword" class="form-label"></label>
+                    <input asp-for="SystemAccount.AccountPassword" class="form-control" type="password" />
+                    <span asp-validation-for="SystemAccount.AccountPassword" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SystemAccount.AccountRole" class="form-label"></label>
+                    <input asp-for="SystemAccount.AccountRole" class="form-control" />
+                    <span asp-validation-for="SystemAccount.AccountRole" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex">
+                    <button type="submit" class="btn btn-primary me-2">Create</button>
+                    <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
 </div>
 
 @section Scripts {
