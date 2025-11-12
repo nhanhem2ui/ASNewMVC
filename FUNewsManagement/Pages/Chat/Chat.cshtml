@@ -1,12 +1,14 @@
-
 @page "{id?}"
 @model FUNewsManagement.Pages.Chat.ChatModel
 @{
     ViewData["Title"] = "Chat";
+    Layout = "_Layout";
 }
+
 <head>
     <link rel="stylesheet" href="~/css/Chat/Chat.css" />
 </head>
+
 <div class="container">
     <div class="main-content">
         <!-- Sidebar -->
@@ -18,25 +20,35 @@
                 </svg>
                 Previous Chats
             </h2>
+
             <div class="sidebar-content">
                 <ul id="chatUsersList" class="chat-users-list">
-                    @if (Model.ChatUsers.Any())
+                    @if (Model.ChatUsers != null && Model.ChatUsers.Any())
                     {
                         @foreach (var chatUser in Model.ChatUsers)
                         {
                             <li>
-                                <button class="user-item @(Model.CurrentReceiver?.AccountId.ToString() == chatUser.UserId ? "selected" : "")"
-                                        onclick="selectUser('@chatUser.UserId', '@chatUser.UserName', '@Url.Content(chatUser.UserAvatar ?? "/img/user.png")')">
+                                <button class="user-item @(Model.CurrentReceiver?.AccountId == chatUser.UserId ? "selected" : "")"
+                                        onclick="selectUser('@chatUser.UserId', '@chatUser.UserName', '@Url.Content("/img/user.png")')">
                                     <div class="user-avatar-container">
                                         <div class="avatar">
-                                            <img src="@Url.Content(chatUser.UserAvatar ?? "/img/user.png")" alt="@chatUser.UserName" />
+                                            <img src="@Url.Content("/img/user.png")" alt="@chatUser.UserName" />
                                         </div>
                                         <div class="online-indicator hidden" data-user-id="@chatUser.UserId"></div>
                                     </div>
                                     <div class="user-info">
                                         <div class="user-header">
                                             <div class="user-name">@chatUser.UserName</div>
+                                            @if (chatUser.LastMessageTime != null)
+                                            {
+                                                <div class="message-time">@chatUser.LastMessageTime.ToString("MM/dd HH:mm")</div>
+                                            }
                                         </div>
+                                        <div class="last-message">@chatUser.LastMessage</div>
+                                        @if (chatUser.MessageCount > 0)
+                                        {
+                                            <div class="badge badge-neutral badge-sm">@chatUser.MessageCount</div>
+                                        }
                                     </div>
                                 </button>
                             </li>
@@ -57,7 +69,7 @@
                 <div class="chat-header-content">
                     <div class="avatar avatar-sm">
                         <img id="receiverAvatar"
-                             src="@Url.Content(Model.CurrentReceiver != null ? "/img/user.png" : "/img/user.png")"
+                             src="@Url.Content("/img/user.png")"
                              alt="Receiver Avatar" />
                     </div>
                     <span id="receiverName" class="receiver-name">
@@ -75,16 +87,58 @@
 
             <!-- Messages -->
             <div class="messages-container" id="messagesContainer">
+                @if (Model.CurrentReceiver != null && Model.ChatHistory != null && Model.ChatHistory.Any())
+                {
+                    @foreach (var message in Model.ChatHistory)
+                    {
+                        var isReceived = message.SenderId != Model.CurrentUser.AccountId;
+                        <div class="chat @(isReceived ? "chat-start" : "chat-end")">
+                            <div class="chat-image avatar">
+                                <img src="@Url.Content(isReceived
+                                                                         ? ("/img/user.png")
+                                                                         : ("/img/user.png"))"
+                             alt="@(isReceived? Model.CurrentReceiver.AccountName : Model.CurrentUser.AccountName)" />
+                    </div>
+                    <div class="chat-header">
+                        @(isReceived? Model.CurrentReceiver.AccountName : Model.CurrentUser.AccountName)
+                        <time class="message-timestamp">@message.Timestamp.ToString("HH:mm")</time>
+                    </div>
+                    <div class="chat-bubble @(isReceived ? "chat-bubble-primary" : "chat-bubble-secondary")">
+                        @message.Message
+                    </div>
+                </div>
+                                }
+                }
+                else if (Model.CurrentReceiver != null)
+                {
+                    <div class="empty-state">
+                        <div class="chat chat-start">
+                            <div class="chat-bubble chat-bubble-info">
+                                Start your conversation with @Model.CurrentReceiver.AccountName
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="chat chat-start">
+                            <div class="chat-bubble chat-bubble-info">
+                                Welcome to the chat! Select a conversation from the sidebar to start messaging.
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
 
             <!-- Input -->
             <div class="message-input-container">
-                @Html.AntiForgeryToken()
-                <form id="messageForm" class="message-form">
+                <form id="messageForm" class="message-form" onsubmit="return false;">
                     <input type="text" id="messageInput" placeholder="Type your message..."
                            class="input" maxlength="500"
                            @(Model.CurrentReceiver == null ? "disabled" : "") />
-                    <button type="submit" id="sendButton" class="btn btn-primary"
+                    <button type="button" id="sendButton" class="btn btn-primary"
+                            onclick="sendMessage()"
                             @(Model.CurrentReceiver == null ? "disabled" : "")>
                         <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.429a1 1 0 001.17-1.409l-7-14z"></path>
@@ -106,7 +160,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
     <script>
         let connection;
-        let currentReceiverId = @Html.Raw(Model.CurrentReceiver?.AccountId != null ? $"'{@Model.CurrentReceiver.AccountId}'" : "null");
+        let currentReceiverId = @Html.Raw(Model.CurrentReceiver?.AccountId != null ? $"'{Model.CurrentReceiver.AccountId}'" : "null");
         let currentUserId = '@Html.Raw(Model.CurrentUser?.AccountId)';
         let connectedUsers = [];
 
@@ -122,164 +176,57 @@
                     .withAutomaticReconnect([0, 2000, 10000, 30000])
                     .build();
 
-                connection.on("UpdatedConnectedUsers", function (users) {
-                    connectedUsers = users;
-                    updateOnlineStatus(users);
-                });
-
-                connection.on("ReceiveMessage", function (senderId, senderName, message, timestamp) {
+                connection.on("UpdatedConnectedUsers", users => updateOnlineStatus(users));
+                connection.on("ReceiveMessage", (senderId, senderName, message, timestamp) => {
                     if (senderId === currentReceiverId || senderId === currentUserId) {
                         displayMessage(senderId, senderName, message, timestamp, senderId !== currentUserId);
                         scrollToBottom();
                     }
                 });
 
-                connection.on("MessageSent", function (receiverId, message, timestamp) {
-                });
-
-                connection.on("Error", function (errorMessage) {
-                    showToast('Error: ' + errorMessage, "error");
-                });
-
-                connection.on("UserTyping", function (userId, userName, isTyping) {
-                    if (userId === currentReceiverId && isTyping) {
-                        showTypingIndicator(userName);
-                    } else {
-                        hideTypingIndicator();
-                    }
-                });
-
                 await connection.start();
                 showToast("Connected to chat server", "success");
-
-                monitorConnectionState();
-
-                if (currentReceiverId) {
-                    scrollToBottom();
-                }
             } catch (err) {
-                showToast('Failed to connect to chat server: ' + err.message, "error");
-            }
-        }
-
-        function monitorConnectionState() {
-            if (connection) {
-                connection.onclose((error) => {
-                    showToast("Connection lost. Attempting to reconnect...", "warning");
-                    setTimeout(async () => {
-                        try {
-                            await connection.start();
-                            showToast("Reconnected to chat server", "success");
-                        } catch (err) {
-                            showToast("Failed to reconnect. Please refresh the page.", "error");
-                        }
-                    }, 3000);
-                });
-
-                connection.onreconnecting((error) => {
-                    showToast("Reconnecting to chat server...", "info");
-                });
-
-                connection.onreconnected((connectionId) => {
-                    showToast("Reconnected to chat server", "success");
-                });
-            }
-        }
-
-        async function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim();
-
-            if (!message) return;
-            if (!currentReceiverId) {
-                showToast("Please select a user to chat with", "error");
-                return;
-            }
-            if (!connection || connection.state !== signalR.HubConnectionState.Connected) {
-                showToast("Not connected to chat server", "error");
-                return;
-            }
-
-            try {
-                messageInput.value = '';
-                await connection.invoke("SendMessage", currentReceiverId, message);
-                displayMessage(currentUserId, currentUserName, message, new Date().toISOString(), false);
-                scrollToBottom();
-            } catch (error) {
-                showToast('Failed to send message: ' + (error.message || error), "error");
-                messageInput.value = message;
+                showToast("Failed to connect: " + err.message, "error");
             }
         }
 
         function updateOnlineStatus(users) {
-            document.querySelectorAll('.online-indicator').forEach(indicator => {
-                indicator.classList.add('hidden');
-            });
-
+            document.querySelectorAll('.online-indicator').forEach(ind => ind.classList.add('hidden'));
             users.forEach(user => {
                 const indicator = document.querySelector('[data-user-id="' + user.userId + '"]');
-                if (indicator) {
-                    indicator.classList.remove('hidden');
-                }
+                if (indicator) indicator.classList.remove('hidden');
             });
         }
 
-        function highlightSelectedUser(userId) {
-            document.querySelectorAll('.user-item').forEach(item => {
-                item.classList.remove('selected');
-            });
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message || !currentReceiverId) return;
 
-            const selectedButton = document.querySelector('button[onclick*="' + userId + '"]');
-            if (selectedButton) {
-                selectedButton.classList.add('selected');
+            try {
+                input.value = '';
+                await connection.invoke("SendMessage", currentReceiverId, message);
+                displayMessage(currentUserId, currentUserName, message, new Date().toISOString(), false);
+                scrollToBottom();
+            } catch (err) {
+                showToast("Error sending message: " + err.message, "error");
             }
         }
 
-        async function selectUser(userId, userName, userAvatar) {
-            const newUrl = '/Chat/' + userId;
-            window.history.pushState({}, '', newUrl);
-
-            currentReceiverId = userId;
-
-            document.getElementById('receiverName').textContent = userName;
-            document.getElementById('receiverAvatar').src = userAvatar || defaultAvatarUrl;
-            document.getElementById('messageInput').disabled = false;
-            document.getElementById('sendButton').disabled = false;
-
-            highlightSelectedUser(userId);
-
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.innerHTML = '';
-            document.getElementById('messageInput').focus();
-
-            showToast('Opened chat with ' + userName, "success");
-        }
-
         function displayMessage(senderId, senderName, message, timestamp, isReceived) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            const messageTime = new Date(timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
+            const messages = document.getElementById('messagesContainer');
+            const messageTime = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const messageElement = document.createElement('div');
             messageElement.className = 'chat ' + (isReceived ? 'chat-start' : 'chat-end');
-
-            messageElement.innerHTML =
-                '<div class="chat-image avatar">' +
-                '<img src="' + (isReceived ? currentReceiverAvatar : currentUserAvatar) + '" alt="' + escapeHtml(senderName) + '" />' +
-                '</div>' +
-                '<div class="chat-header">' +
-                escapeHtml(senderName) +
-                '<time class="message-timestamp">' + messageTime + '</time>' +
-                '</div>' +
-                '<div class="chat-bubble ' + (isReceived ? 'chat-bubble-primary' : 'chat-bubble-secondary') + '">' +
-                escapeHtml(message) +
-                '</div>';
-
-            messagesContainer.appendChild(messageElement);
-        }
-
-        function scrollToBottom() {
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            messageElement.innerHTML = `
+                <div class="chat-image avatar">
+                    <img src="${isReceived ? currentReceiverAvatar : currentUserAvatar}" alt="${escapeHtml(senderName)}" />
+                </div>
+                <div class="chat-header">${escapeHtml(senderName)}<time class="message-timestamp">${messageTime}</time></div>
+                <div class="chat-bubble ${isReceived ? 'chat-bubble-primary' : 'chat-bubble-secondary'}">${escapeHtml(message)}</div>
+            `;
+            messages.appendChild(messageElement);
         }
 
         function escapeHtml(text) {
@@ -288,62 +235,29 @@
             return div.innerHTML;
         }
 
-        function showToast(message, type) {
-            type = type || 'info';
+        function scrollToBottom() {
+            const messages = document.getElementById('messagesContainer');
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function showToast(message, type = 'info') {
             const toastContainer = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'alert alert-' + type;
-            toast.innerHTML = '<div><span>' + escapeHtml(message) + '</span></div>';
+            toast.innerHTML = `<div><span>${escapeHtml(message)}</span></div>`;
             toastContainer.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('messageForm').addEventListener('submit', function (e) {
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('messageForm').addEventListener('submit', e => {
                 e.preventDefault();
                 sendMessage();
             });
-
-            const messageInput = document.getElementById('messageInput');
-            if (messageInput) {
-                messageInput.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
-
-                let typingTimer;
-                messageInput.addEventListener('input', function () {
-                    if (currentReceiverId && connection && connection.state === signalR.HubConnectionState.Connected) {
-                        connection.invoke("UserTyping", currentReceiverId, true);
-                        clearTimeout(typingTimer);
-                        typingTimer = setTimeout(() => {
-                            if (connection && connection.state === signalR.HubConnectionState.Connected) {
-                                connection.invoke("UserTyping", currentReceiverId, false);
-                            }
-                        }, 1000);
-                    }
-                });
-            }
             initializeConnection();
         });
 
-        window.addEventListener('popstate', function (event) {
-            const pathParts = window.location.pathname.split('/');
-            const receiverId = pathParts[pathParts.length - 1];
-
-            if (receiverId && receiverId !== 'Chat' && receiverId !== currentReceiverId) {
-                window.location.reload();
-            }
-        });
-
-        window.addEventListener('beforeunload', function () {
-            if (connection) {
-                connection.stop();
-            }
-        });
-
-        window.selectUser = selectUser;
+        window.selectUser = function(userId, userName, userAvatar) {
+            window.location.href = '/Chat/Chat?id=' + userId;
     </script>
 }

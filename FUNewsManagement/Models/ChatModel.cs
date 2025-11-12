@@ -13,9 +13,8 @@ namespace FUNewsManagement.Models
 
         public class ChatUserDto
         {
-            public string UserId { get; set; }
+            public short UserId { get; set; }
             public string UserName { get; set; } = string.Empty;
-            public string? UserAvatar { get; set; }
             public string LastMessage { get; set; } = string.Empty;
             public DateTime LastMessageTime { get; set; }
             public int MessageCount { get; set; }

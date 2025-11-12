@@ -22,7 +22,7 @@ namespace Repository
 
         public void UpdateChat(Chat chat) => _dao.UpdateChat(chat);
 
-        public List<Chat> GetChatsBetweenUsers(string senderId, string receiverId)
+        public List<Chat> GetChatsBetweenUsers(short senderId, short receiverId)
         {
             var allChats = _dao.GetChats();
             return allChats.Where(c =>
@@ -31,13 +31,14 @@ namespace Repository
             ).OrderBy(c => c.Timestamp).ToList();
         }
 
-        public List<string> GetChatUserIds(string currentUserId)
+        public List<short> GetChatUserIds(short currentUserId)
         {
             var allChats = _dao.GetChats();
             var userIds = allChats
                 .Where(c => c.SenderId == currentUserId || c.ReceiverId == currentUserId)
                 .SelectMany(c => new[] { c.SenderId, c.ReceiverId })
-                .Where(id => id != currentUserId)
+                .Where(id => id.HasValue && id.Value != currentUserId)
+                .Select(id => id.Value)
                 .Distinct()
                 .ToList();
             return userIds;

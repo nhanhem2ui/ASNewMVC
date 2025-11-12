@@ -33,38 +33,47 @@ namespace FUNewsManagement.Pages.Chat
             CurrentUser = _accountService.GetSystemAccountById(short.Parse(userId));
             if (CurrentUser == null) return RedirectToPage("/Auth/Login");
 
-            await LoadChatUsers(userId);
+            await LoadChatUsers(short.Parse(userId));
 
             if (!string.IsNullOrEmpty(id))
             {
                 CurrentReceiver = _accountService.GetSystemAccountById(short.Parse(id));
-                await LoadChatHistory(userId, id);
+                await LoadChatHistory(short.Parse(userId), short.Parse(id));
             }
 
             return Page();
         }
 
-        private async Task LoadChatUsers(string currentUserId)
+        private async Task LoadChatUsers(short currentUserId)
         {
             try
             {
-                // Get all user IDs that the current user has chatted with
-                var chatUserIds = _chatService.GetChatUserIds(currentUserId);
-
                 // Get all chats for the current user
                 var allChats = _chatService.GetChats()
                     .Where(c => c.SenderId == currentUserId || c.ReceiverId == currentUserId)
                     .ToList();
 
-                // Get all accounts
-                var allAccounts = _accountService.GetSystemAccounts()
-                    .Where(a => a.AccountId.ToString() != currentUserId)
+                // Get unique user IDs that the current user has chatted with
+                var chatUserIds = allChats
+                    .Select(c => c.SenderId == currentUserId ? c.ReceiverId : c.SenderId)
+                    .Distinct()
                     .ToList();
 
-                ChatUsers = allAccounts
+                // Only load accounts for users who have chat history
+                if (!chatUserIds.Any())
+                {
+                    ChatUsers = new List<ChatUserDto>();
+                    return;
+                }
+
+                var chatAccounts = _accountService.GetSystemAccounts()
+                    .Where(a => chatUserIds.Contains(a.AccountId))
+                    .ToList();
+
+                ChatUsers = chatAccounts
                     .Select(a =>
                     {
-                        var userId = a.AccountId.ToString();
+                        var userId = a.AccountId;
                         var userChats = allChats
                             .Where(c => c.SenderId == userId || c.ReceiverId == userId)
                             .OrderByDescending(c => c.Timestamp)
@@ -76,7 +85,6 @@ namespace FUNewsManagement.Pages.Chat
                         {
                             UserId = userId,
                             UserName = a.AccountName ?? "Unknown",
-                            UserAvatar = "",
                             LastMessage = lastChat?.Message ?? "",
                             LastMessageTime = lastChat?.Timestamp ?? DateTime.MinValue,
                             MessageCount = userChats.Count
@@ -92,7 +100,7 @@ namespace FUNewsManagement.Pages.Chat
             }
         }
 
-        private async Task LoadChatHistory(string currentUserId, string receiverId)
+        private async Task LoadChatHistory(short currentUserId, short receiverId)
         {
             try
             {

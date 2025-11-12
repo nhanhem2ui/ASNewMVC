@@ -41,7 +41,7 @@ namespace FUNewsManagement.Hubs
                 }
 
                 // Remove existing connections for this user
-                var existingConnections = ConnectedUsers.Where(kvp => kvp.Value.UserId == userId).ToList();
+                var existingConnections = ConnectedUsers.Where(kvp => kvp.Value.UserId == short.Parse(userId)).ToList();
                 foreach (var existing in existingConnections)
                 {
                     ConnectedUsers.TryRemove(existing.Key, out _);
@@ -50,7 +50,7 @@ namespace FUNewsManagement.Hubs
                 var connectedUser = new ConnectedUser
                 {
                     ConnectionId = Context.ConnectionId,
-                    UserId = userInfo.AccountId.ToString(),
+                    UserId = userInfo.AccountId,
                     UserName = userInfo.AccountName ?? "Unknown",
                     UserAvatar = string.Empty,
                 };
@@ -75,7 +75,7 @@ namespace FUNewsManagement.Hubs
                 if (ConnectedUsers.TryRemove(Context.ConnectionId, out var user))
                 {
                     await Clients.All.SendAsync("UpdatedConnectedUsers", ConnectedUsers.Values.ToList());
-                    await Clients.All.SendAsync("UserDisconnected", user.UserId, user.UserName);
+                    await Clients.All.SendAsync("UserDisconnected", user.UserId.ToString(), user.UserName);
                 }
             }
             catch (Exception ex)
@@ -86,7 +86,7 @@ namespace FUNewsManagement.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendMessage(string receiverId, string message)
+        public async Task SendMessage(string receiverIdStr, string message)
         {
             try
             {
@@ -99,6 +99,12 @@ namespace FUNewsManagement.Hubs
                 if (string.IsNullOrWhiteSpace(message) || message.Length > 500)
                 {
                     await Clients.Caller.SendAsync("Error", "Invalid message");
+                    return;
+                }
+
+                if (!short.TryParse(receiverIdStr, out short receiverId))
+                {
+                    await Clients.Caller.SendAsync("Error", "Invalid receiver ID");
                     return;
                 }
 
@@ -119,11 +125,11 @@ namespace FUNewsManagement.Hubs
                 if (receiver != null)
                 {
                     await Clients.Client(receiver.ConnectionId).SendAsync("ReceiveMessage",
-                        sender.UserId, sender.UserName, message, chat.Timestamp.ToString("o"));
+                        sender.UserId.ToString(), sender.UserName, message, chat.Timestamp.ToString("o"));
                 }
 
                 // Confirm to sender
-                await Clients.Caller.SendAsync("MessageSent", receiverId, message, chat.Timestamp.ToString("o"));
+                await Clients.Caller.SendAsync("MessageSent", receiverIdStr, message, chat.Timestamp.ToString("o"));
             }
             catch (Exception ex)
             {
@@ -131,7 +137,7 @@ namespace FUNewsManagement.Hubs
             }
         }
 
-        public async Task UserTyping(string receiverId, bool isTyping)
+        public async Task UserTyping(string receiverIdStr, bool isTyping)
         {
             try
             {
@@ -140,14 +146,19 @@ namespace FUNewsManagement.Hubs
                     return;
                 }
 
+                if (!short.TryParse(receiverIdStr, out short receiverId))
+                {
+                    return;
+                }
+
                 var receiver = ConnectedUsers.Values.FirstOrDefault(u => u.UserId == receiverId);
                 if (receiver != null)
                 {
                     await Clients.Client(receiver.ConnectionId).SendAsync("UserTyping",
-                        sender.UserId, sender.UserName, isTyping);
+                        sender.UserId.ToString(), sender.UserName, isTyping);
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
                 return;
             }
@@ -156,7 +167,7 @@ namespace FUNewsManagement.Hubs
         private class ConnectedUser
         {
             public string ConnectionId { get; set; } = string.Empty;
-            public string UserId { get; set; } = string.Empty;
+            public short UserId { get; set; }
             public string UserName { get; set; } = string.Empty;
             public string UserAvatar { get; set; } = string.Empty;
             public DateTime ConnectedAt { get; set; } = DateTime.Now;

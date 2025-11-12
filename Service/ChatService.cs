@@ -41,12 +41,12 @@ namespace Service
             _chatRepository.UpdateChat(chat);
         }
 
-        public List<Chat> GetChatsBetweenUsers(string senderId, string receiverId)
+        public List<Chat> GetChatsBetweenUsers(short senderId, short receiverId)
         {
             return _chatRepository.GetChatsBetweenUsers(senderId, receiverId);
         }
 
-        public List<string> GetChatUserIds(string currentUserId)
+        public List<short> GetChatUserIds(short currentUserId)
         {
             return _chatRepository.GetChatUserIds(currentUserId);
         }

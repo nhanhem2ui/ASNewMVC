@@ -236,6 +236,10 @@
                             </li>
 
                             <li class.nav-item">
+                                <a class="nav-link" asp-page="/Chat/Chat">Message</a>
+                            </li>
+
+                            <li class.nav-item">
                                 <form asp-page="/Auth/Logout" method="post" class="nav-link">
                                     <button type="submit" class="btn-signout">Sign out</button>
                                 </form>
@@ -252,13 +256,6 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FU News - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

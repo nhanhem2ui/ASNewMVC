@@ -288,10 +288,12 @@
     background-color: #dbeafe;
     color: #1e40af;
 }
+.chat-area {
+    position: relative;
+}
 
-/* Loading Overlay */
 .loading-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -300,9 +302,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2000;
+    z-index: 10;
 }
+
 
 .loading {
     /* Add your loading spinner styles here */
+}
+/* Fix container to not include footer */
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: relative; /* Add this */
+}
+
+/* Ensure loading overlay doesn't escape chat-area */
+.chat-area {
+    position: relative; /* This is already there */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9fafb;
+    overflow: hidden; /* Add this to contain the overlay */
+}
+
+/* Make sure hidden actually hides */
+.hidden {
+    display: none !important; /* Add !important to ensure it takes precedence */
 }
