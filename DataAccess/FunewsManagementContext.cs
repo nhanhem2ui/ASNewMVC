@@ -115,11 +115,42 @@ public partial class FunewsManagementContext : DbContext
             entity.Property(e => e.AccountName).HasMaxLength(100);
             entity.Property(e => e.AccountPassword).HasMaxLength(70);
         });
-        modelBuilder.Entity<Chat>()
-        .HasOne(c => c.Sender)
-        .WithMany() // A User can send many chats
-        .HasForeignKey(c => c.SenderId)
-        .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Chat>(entity =>
+        {
+            entity.HasKey(e => e.ChatId);
+
+            entity.ToTable("Chat");
+
+            entity.Property(e => e.ChatId)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(e => e.Message)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Timestamp)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            entity.Property(e => e.SenderId)
+                .HasMaxLength(20);
+
+            entity.Property(e => e.ReceiverId)
+                .HasMaxLength(20);
+
+            entity.HasOne(d => d.Sender)
+                .WithMany()
+                .HasForeignKey(d => d.SenderId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Chat_Sender");
+
+            entity.HasOne(d => d.Receiver)
+                .WithMany()
+                .HasForeignKey(d => d.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Chat_Receiver");
+        });
 
         modelBuilder.Entity<Tag>(entity =>
         {

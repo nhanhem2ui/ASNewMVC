@@ -2,7 +2,6 @@ using DataAccess;
 using FUNewsManagement.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Identity;
 using Repository;
 using Service;
 
@@ -41,22 +40,26 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
 });
 
-
+// Register DAOs
 builder.Services.AddScoped<TagDAO>();
 builder.Services.AddScoped<CategoryDAO>();
 builder.Services.AddScoped<SystemAccountDAO>();
 builder.Services.AddScoped<NewsArticleDAO>();
+builder.Services.AddScoped<ChatDAO>();
 
+// Register Repositories
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
 builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
+// Register Services
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISystemAccountService, SystemAccountService>();
 builder.Services.AddScoped<INewsArticleService, NewsArticleService>();
-
+builder.Services.AddScoped<IChatService, ChatService>();
 
 var app = builder.Build();
 
@@ -64,7 +67,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -74,11 +76,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
-app.MapHub<ChatHub>("/chathub");
+app.MapHub<ChatHub>("/ChatHub");
 
 app.Run();

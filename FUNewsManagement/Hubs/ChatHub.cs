@@ -1,4 +1,3 @@
-
 using BusinessObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -12,14 +11,14 @@ namespace FUNewsManagement.Hubs
     public class ChatHub : Hub
     {
         private readonly ISystemAccountService _accountService;
-        private readonly INewsArticleService _newsArticleService;
+        private readonly IChatService _chatService;
 
         private static readonly ConcurrentDictionary<string, ConnectedUser> ConnectedUsers = new();
 
-        public ChatHub(ISystemAccountService accountService, INewsArticleService newsArticleService)
+        public ChatHub(ISystemAccountService accountService, IChatService chatService)
         {
             _accountService = accountService;
-            _newsArticleService = newsArticleService;
+            _chatService = chatService;
         }
 
         public override async Task OnConnectedAsync()
@@ -34,13 +33,14 @@ namespace FUNewsManagement.Hubs
                     return;
                 }
 
-                var userInfo = await _accountService.GetAccountByIdAsync(int.Parse(userId));
+                var userInfo = _accountService.GetSystemAccountById(short.Parse(userId));
                 if (userInfo == null)
                 {
                     await Clients.Caller.SendAsync("Error", "User not found");
                     return;
                 }
 
+                // Remove existing connections for this user
                 var existingConnections = ConnectedUsers.Where(kvp => kvp.Value.UserId == userId).ToList();
                 foreach (var existing in existingConnections)
                 {
@@ -52,7 +52,7 @@ namespace FUNewsManagement.Hubs
                     ConnectionId = Context.ConnectionId,
                     UserId = userInfo.AccountId.ToString(),
                     UserName = userInfo.AccountName ?? "Unknown",
-                    UserAvatar = string.Empty, 
+                    UserAvatar = string.Empty,
                 };
 
                 ConnectedUsers.TryAdd(Context.ConnectionId, connectedUser);
@@ -102,21 +102,28 @@ namespace FUNewsManagement.Hubs
                     return;
                 }
 
-                var chatMessage = new NewsArticle
+                // Save chat message to database
+                var chat = new Chat
                 {
-                    NewsTitle = "Chat Message",
-                    NewsContent = message.Trim(),
-                    CreatedDate = DateTime.Now,
-                    AccountId = int.Parse(sender.UserId),
+                    ChatId = Guid.NewGuid().ToString(),
+                    Message = message.Trim(),
+                    Timestamp = DateTime.Now,
+                    SenderId = sender.UserId,
+                    ReceiverId = receiverId
                 };
-                
+
+                _chatService.SaveChat(chat);
+
+                // Send to receiver if online
                 var receiver = ConnectedUsers.Values.FirstOrDefault(u => u.UserId == receiverId);
                 if (receiver != null)
                 {
                     await Clients.Client(receiver.ConnectionId).SendAsync("ReceiveMessage",
-                        sender.UserId, sender.UserName, message, chatMessage.CreatedDate.ToString("o"));
+                        sender.UserId, sender.UserName, message, chat.Timestamp.ToString("o"));
                 }
-                await Clients.Caller.SendAsync("MessageSent", receiverId, message, chatMessage.CreatedDate.ToString("o"));
+
+                // Confirm to sender
+                await Clients.Caller.SendAsync("MessageSent", receiverId, message, chat.Timestamp.ToString("o"));
             }
             catch (Exception ex)
             {
@@ -140,7 +147,7 @@ namespace FUNewsManagement.Hubs
                         sender.UserId, sender.UserName, isTyping);
                 }
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 return;
             }
@@ -149,7 +156,7 @@ namespace FUNewsManagement.Hubs
         private class ConnectedUser
         {
             public string ConnectionId { get; set; } = string.Empty;
-            public string UserId { get; set; }
+            public string UserId { get; set; } = string.Empty;
             public string UserName { get; set; } = string.Empty;
             public string UserAvatar { get; set; } = string.Empty;
             public DateTime ConnectedAt { get; set; } = DateTime.Now;

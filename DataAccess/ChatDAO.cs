@@ -1,4 +1,5 @@
 ﻿using BusinessObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess
 {
@@ -10,7 +11,11 @@ namespace DataAccess
             try
             {
                 using var db = new FunewsManagementContext();
-                listChats = db.Chats.ToList();
+                listChats = db.Chats
+                    .Include(c => c.Sender)
+                    .Include(c => c.Receiver)
+                    .OrderBy(c => c.Timestamp)
+                    .ToList();
             }
             catch (Exception e)
             {
@@ -53,8 +58,11 @@ namespace DataAccess
             {
                 using var context = new FunewsManagementContext();
                 var p1 = context.Chats.SingleOrDefault(c => c.ChatId == p.ChatId);
-                context.Chats.Remove(p1);
-                context.SaveChanges();
+                if (p1 != null)
+                {
+                    context.Chats.Remove(p1);
+                    context.SaveChanges();
+                }
             }
             catch (Exception e)
             {
@@ -65,7 +73,10 @@ namespace DataAccess
         public Chat GetChatById(int id)
         {
             using var db = new FunewsManagementContext();
-            return db.Chats.FirstOrDefault(c => c.ChatId.Equals(id));
+            return db.Chats
+                .Include(c => c.Sender)
+                .Include(c => c.Receiver)
+                .FirstOrDefault(c => c.ChatId.Equals(id.ToString()));
         }
     }
 }

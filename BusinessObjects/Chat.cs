@@ -14,12 +14,12 @@ namespace BusinessObjects
         [DisplayFormat(DataFormatString = "{HH:mm dd/MM/yyyy}")]
         public DateTime Timestamp { get; set; } = DateTime.Now;
 
-        public string? SenderId { get; set; }
+        public short? SenderId { get; set; }
 
         [ValidateNever]
         public virtual SystemAccount Sender { get; set; }
 
-        public string? ReceiverId { get; set; }
+        public short? ReceiverId { get; set; }
         [ValidateNever]
         public virtual SystemAccount Receiver { get; set; }
     }
