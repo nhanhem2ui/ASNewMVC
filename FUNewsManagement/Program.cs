@@ -1,4 +1,5 @@
 using DataAccess;
+using FUNewsManagement.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +14,7 @@ builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
 {
     options.Conventions.AddPageRoute("/Auth/Login", "");
 });
+builder.Services.AddSignalR();
 
 builder.Services.AddSession(options =>
 {
@@ -77,5 +79,6 @@ app.UseAuthentication();
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();
