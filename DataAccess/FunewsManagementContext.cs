@@ -1,4 +1,5 @@
-﻿using BussinessObject;
+﻿using BusinessObjects;
+using BussinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -20,7 +21,7 @@ public partial class FunewsManagementContext : DbContext
     public virtual DbSet<NewsArticle> NewsArticles { get; set; }
 
     public virtual DbSet<SystemAccount> SystemAccounts { get; set; }
-
+    public virtual DbSet<Chat> Chats { get; set; }
     public virtual DbSet<Tag> Tags { get; set; }
 
     private string GetConnectionString()
@@ -114,6 +115,11 @@ public partial class FunewsManagementContext : DbContext
             entity.Property(e => e.AccountName).HasMaxLength(100);
             entity.Property(e => e.AccountPassword).HasMaxLength(70);
         });
+        modelBuilder.Entity<Chat>()
+        .HasOne(c => c.Sender)
+        .WithMany() // A User can send many chats
+        .HasForeignKey(c => c.SenderId)
+        .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Tag>(entity =>
         {
