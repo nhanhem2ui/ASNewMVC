@@ -1,13 +1,10 @@
-
-using BusinessObjects;
+using BussinessObject;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
 {
-    [Authorize(Roles = "Admin,Staff,Lecturer")]
     public class IndexModel : PageModel
     {
         private readonly ITagService _tagService;
