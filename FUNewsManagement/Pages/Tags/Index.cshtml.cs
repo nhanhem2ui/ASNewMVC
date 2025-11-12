@@ -1,9 +1,13 @@
-using BussinessObject;
+
+using BusinessObjects;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
 {
+    [Authorize(Roles = "Admin,Staff,Lecturer")]
     public class IndexModel : PageModel
     {
         private readonly ITagService _tagService;
@@ -13,11 +17,18 @@ namespace FUNewsManagement.Pages.Tags
             _tagService = tagService;
         }
 
-        public IList<Tag> Tag { get; set; } = default!;
+        public IList<Tag> Tags { get; set; }
 
-        public async Task OnGetAsync()
+        public void OnGet(string? filter)
         {
-            Tag = (IList<Tag>)_tagService.GetTags();
+            var tags = _tagService.GetTags();
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                tags = tags.Where(t => t.TagName.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            Tags = tags;
         }
     }
 }

@@ -1,10 +1,13 @@
-using BussinessObject;
+
+using BusinessObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
 {
+    [Authorize(Roles = "Admin,Staff")]
     public class CreateModel : PageModel
     {
         private readonly ITagService _tagService;
@@ -14,26 +17,32 @@ namespace FUNewsManagement.Pages.Tags
             _tagService = tagService;
         }
 
+        [BindProperty]
+        public Tag Tag { get; set; }
+
         public IActionResult OnGet()
         {
+            Tag = new Tag();
             return Page();
         }
 
-        [BindProperty]
-        public Tag Tag { get; set; } = default!;
-
-
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
-            if (!ModelState.IsValid || _tagService == null || Tag == null)
+            if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _tagService.SaveTag(Tag);
-
-            return RedirectToPage("./Index");
+            try
+            {
+                _tagService.SaveTag(Tag);
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Failed to create tag: {ex.Message}");
+                return Page();
+            }
         }
     }
 }

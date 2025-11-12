@@ -1,10 +1,13 @@
-using BussinessObject;
+
+using BusinessObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
 {
+    [Authorize(Roles = "Admin,Staff")]
     public class EditModel : PageModel
     {
         private readonly ITagService _tagService;
@@ -15,16 +18,11 @@ namespace FUNewsManagement.Pages.Tags
         }
 
         [BindProperty]
-        public Tag Tag { get; set; } = default!;
+        public Tag Tag { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int id)
         {
-            if (id == null || _tagService == null)
-            {
-                return NotFound();
-            }
-
-            var tag = _tagService.GetTagById(id.Value);
+            var tag = _tagService.GetTagById(id);
             if (tag == null)
             {
                 return NotFound();
@@ -33,18 +31,28 @@ namespace FUNewsManagement.Pages.Tags
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost(int id)
         {
+            if (id != Tag.TagId)
+            {
+                return BadRequest();
+            }
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _tagService.UpdateTag(Tag);
-
-            return RedirectToPage("./Index");
+            try
+            {
+                _tagService.UpdateTag(Tag);
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Failed to update tag: {ex.Message}");
+                return Page();
+            }
         }
     }
 }

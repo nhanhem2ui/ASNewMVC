@@ -1,10 +1,13 @@
-using BussinessObject;
+
+using BusinessObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
 
 namespace FUNewsManagement.Pages.Tags
 {
+    [Authorize(Roles = "Admin,Staff")]
     public class DeleteModel : PageModel
     {
         private readonly ITagService _tagService;
@@ -15,43 +18,31 @@ namespace FUNewsManagement.Pages.Tags
         }
 
         [BindProperty]
-        public Tag Tag { get; set; } = default!;
+        public Tag Tag { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int id)
         {
-            if (id == null || _tagService == null)
-            {
-                return NotFound();
-            }
-
-            var tag = _tagService.GetTagById(id.Value);
-
+            var tag = _tagService.GetTagById(id);
             if (tag == null)
             {
                 return NotFound();
             }
-            else
-            {
-                Tag = tag;
-            }
+            Tag = tag;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public IActionResult OnPost(int id)
         {
-            if (id == null || _tagService == null)
+            try
             {
-                return NotFound();
+                _tagService.DeleteTag(id);
+                return RedirectToPage("./Index");
             }
-            var tag = _tagService.GetTagById(id.Value);
-
-            if (tag != null)
+            catch (Exception ex)
             {
-                Tag = tag;
-                _tagService.DeleteTag(Tag.TagId);
+                ModelState.AddModelError(string.Empty, $"Failed to delete tag: {ex.Message}");
+                return Page();
             }
-
-            return RedirectToPage("./Index");
         }
     }
 }

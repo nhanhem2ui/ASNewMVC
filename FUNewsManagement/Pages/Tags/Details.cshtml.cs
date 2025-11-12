@@ -1,4 +1,5 @@
-using BussinessObject;
+
+using BusinessObjects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
@@ -14,24 +15,16 @@ namespace FUNewsManagement.Pages.Tags
             _tagService = tagService;
         }
 
-        public Tag Tag { get; set; } = default!;
+        public Tag Tag { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int id)
         {
-            if (id == null || _tagService == null)
-            {
-                return NotFound();
-            }
-
-            var tag = _tagService.GetTagById(id.Value);
+            var tag = _tagService.GetTagById(id);
             if (tag == null)
             {
                 return NotFound();
             }
-            else
-            {
-                Tag = tag;
-            }
+            Tag = tag;
             return Page();
         }
     }
