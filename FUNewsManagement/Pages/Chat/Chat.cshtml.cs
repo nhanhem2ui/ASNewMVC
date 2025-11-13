@@ -44,22 +44,60 @@ namespace FUNewsManagement.Pages.Chat
             return Page();
         }
 
+        public IActionResult OnGetChatHistory(string receiverId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return new JsonResult(new { error = "User not authenticated" }) { StatusCode = 401 };
+            }
+
+            try
+            {
+                if (!short.TryParse(receiverId, out short receiverIdShort))
+                {
+                    return new JsonResult(new { error = "Invalid receiver ID" }) { StatusCode = 400 };
+                }
+
+                var currentUserId = short.Parse(userId);
+                var messages = _chatService.GetChats()
+                    .Where(c => (c.SenderId == currentUserId && c.ReceiverId == receiverIdShort) ||
+                               (c.SenderId == receiverIdShort && c.ReceiverId == currentUserId))
+                    .OrderBy(c => c.Timestamp)
+                    .ToList();
+
+                var chatHistory = messages.Select(m => new
+                {
+                    chatId = m.ChatId,
+                    senderId = m.SenderId.ToString(),
+                    senderName = _accountService.GetSystemAccountById((short)(m.SenderId ?? 0))?.AccountName ?? "Unknown",
+                    receiverName = _accountService.GetSystemAccountById((short)(m.ReceiverId ?? 0))?.AccountName ?? "Unknown",
+                    receiverId = m.ReceiverId.ToString(),
+                    message = m.Message,
+                    timestamp = m.Timestamp.ToString("o")
+                }).ToList();
+                return new JsonResult(chatHistory);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading chat history: {ex.Message}");
+                return new JsonResult(new { error = "Error loading chat history" }) { StatusCode = 500 };
+            }
+        }
+
         private async Task LoadChatUsers(short currentUserId)
         {
             try
             {
-                // Get all chats for the current user
                 var allChats = _chatService.GetChats()
                     .Where(c => c.SenderId == currentUserId || c.ReceiverId == currentUserId)
                     .ToList();
 
-                // Get unique user IDs that the current user has chatted with
                 var chatUserIds = allChats
                     .Select(c => c.SenderId == currentUserId ? c.ReceiverId : c.SenderId)
                     .Distinct()
                     .ToList();
 
-                // Only load accounts for users who have chat history
                 if (!chatUserIds.Any())
                 {
                     ChatUsers = new List<ChatUserDto>();

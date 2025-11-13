@@ -5,57 +5,223 @@
     ViewData["Title"] = "Create News Article";
 }
 
-<div class="container-fluid">
-    <h1>Create News Article</h1>
+<style>
+    .create-container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
+        .create-container h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .create-container hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+    .form-group, .mb-3 {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        color: #333333;
+        font-weight: 500;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #d0d0d0;
+        background-color: #ffffff;
+        color: #1a1a1a;
+        font-size: 15px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: #666666;
+            background-color: #fafafa;
+        }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .text-danger {
+        color: #d32f2f;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+        font-weight: 500;
+    }
+
+    /* Tags section */
+    .tags-section {
+        margin-bottom: 20px;
+    }
+
+        .tags-section > label {
+            color: #333333;
+            font-weight: 500;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+    .tags-container {
+        padding: 15px;
+        background-color: #f9fafb;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+        cursor: pointer;
+        border: 2px solid #d0d0d0;
+        border-radius: 3px;
+        transition: all 0.2s ease;
+    }
+
+        .form-check-input:checked {
+            background-color: #1a1a1a;
+            border-color: #1a1a1a;
+        }
+
+    .form-check-label {
+        color: #333333;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        padding: 12px 30px;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border: none;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #333333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+    .btn-secondary {
+        padding: 12px 30px;
+        border: 1px solid #d0d0d0;
+        background-color: #ffffff;
+        color: #333333;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #f2f2f2;
+        }
+
+    .info-text {
+        color: #666666;
+        font-size: 12px;
+        margin-top: 5px;
+        font-style: italic;
+    }
+</style>
+
+<div class="create-container">
+    <h1>Create News Article</h1>
     <hr />
 
-    <div class="row">
-        <div class="col-md-8">
-            <form method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="mb-3">
-                    <label asp-for="NewsArticle.NewsTitle" class="form-label"></label>
-                    <input asp-for="NewsArticle.NewsTitle" class="form-control" />
-                    <span asp-validation-for="NewsArticle.NewsTitle" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="NewsArticle.NewsContent" class="form-label"></label>
-                    <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="5"></textarea>
-                    <span asp-validation-for="NewsArticle.NewsContent" class="text-danger"></span>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="NewsArticle.CategoryId" class="form-label"></label>
-                            <select asp-for="NewsArticle.CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="control-label">Tags</label>
-                            <select name="selectedTags" class="form-select" multiple asp-items="ViewBag.AllTags"></select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3 form-check">
-                    <input class="form-check-input" asp-for="NewsArticle.NewsStatus" />
-                    <label class="form-check-label" asp-for="NewsArticle.NewsStatus">@Html.DisplayNameFor(model => model.NewsArticle.NewsStatus)</label>
-                </div>
-
-                <div class="d-flex">
-                    <button type="submit" class="btn btn-primary me-2">Create</button>
-                    <a asp-page="Index" class="btn btn-secondary">Back to List</a>
-                </div>
-            </form>
+        <div class="form-group">
+            <label asp-for="NewsArticle.NewsTitle"></label>
+            <input asp-for="NewsArticle.NewsTitle" class="form-control" />
+            <span asp-validation-for="NewsArticle.NewsTitle" class="text-danger"></span>
         </div>
-    </div>
+
+        <div class="form-group">
+            <label asp-for="NewsArticle.NewsContent"></label>
+            <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="NewsArticle.NewsContent" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="NewsArticle.CategoryId"></label>
+                    <select asp-for="NewsArticle.CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="tags-section">
+                    <label>Tags</label>
+                    <div class="tags-container">
+                        @foreach (var tag in (IEnumerable<SelectListItem>)ViewBag.AllTags)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selectedTags" value="@tag.Value" id="tag_@tag.Value" />
+                                <label class="form-check-label" for="tag_@tag.Value">@tag.Text</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" asp-for="NewsArticle.NewsStatus" />
+            <label class="form-check-label" asp-for="NewsArticle.NewsStatus">
+                @Html.DisplayNameFor(model => model.NewsArticle.NewsStatus)
+            </label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
