@@ -1,9 +1,11 @@
 using DataAccess;
 using FUNewsManagement.Hubs;
+using FUNewsManagement.BackgroundServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Repository;
 using Service;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +62,21 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISystemAccountService, SystemAccountService>();
 builder.Services.AddScoped<INewsArticleService, NewsArticleService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+
+// Register Background Services
+// Option 1: Archive old inactive articles daily at 2 AM
+builder.Services.AddHostedService<NewsArticleArchiveService>();
+
+// Option 2: Track article statistics every hour
+builder.Services.AddHostedService<ArticleStatisticsService>();
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/app-log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

@@ -1,11 +1,6 @@
 using BussinessObject;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FUNewsManagement.Pages.NewsArticles
 {
@@ -23,8 +18,8 @@ namespace FUNewsManagement.Pages.NewsArticles
         public string CurrentFilter { get; set; }
         public string CurrentSort { get; set; }
 
-        public IList<NewsArticle> NewsArticles { get;set; }
-        
+        public IList<NewsArticle> NewsArticles { get; set; }
+
         public int PageIndex { get; set; }
         public int TotalPages { get; set; }
 
@@ -67,7 +62,7 @@ namespace FUNewsManagement.Pages.NewsArticles
                     newsArticlesIQ = newsArticlesIQ.OrderBy(s => s.NewsTitle);
                     break;
             }
-            
+
             var pageSize = 5;
             PageIndex = pageIndex ?? 1;
             var count = newsArticlesIQ.Count();

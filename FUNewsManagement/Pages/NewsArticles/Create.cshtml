@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model FUNewsManagement.Pages.NewsArticles.CreateModel
 
 @{
@@ -41,22 +41,27 @@
         font-size: 14px;
     }
 
-    .form-control, .form-select {
+    .form-control {
         width: 100%;
         padding: 12px 15px;
         border: 1px solid #d0d0d0;
         background-color: #ffffff;
         color: #1a1a1a;
         font-size: 15px;
+        box-sizing: border-box;
         border-radius: 4px;
         transition: all 0.2s ease;
     }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus {
             outline: none;
             border-color: #666666;
             background-color: #fafafa;
         }
+
+    select.form-control {
+        cursor: pointer;
+    }
 
     textarea.form-control {
         min-height: 120px;
@@ -72,12 +77,13 @@
         font-weight: 500;
     }
 
-    /* Tags section */
+    /* Checkbox Styling */
     .tags-section {
         margin-bottom: 20px;
     }
 
         .tags-section > label {
+            display: block;
             color: #333333;
             font-weight: 500;
             margin-bottom: 12px;
@@ -94,9 +100,9 @@
     }
 
     .form-check {
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
-        margin-bottom: 10px;
     }
 
     .form-check-input {
@@ -114,13 +120,19 @@
             border-color: #1a1a1a;
         }
 
+        .form-check-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+        }
+
     .form-check-label {
         color: #333333;
         font-size: 14px;
         cursor: pointer;
+        margin: 0;
+        user-select: none;
     }
 
-    /* Buttons */
     .btn-primary {
         padding: 12px 30px;
         background-color: #1a1a1a;
@@ -128,8 +140,11 @@
         border: none;
         font-size: 15px;
         font-weight: 500;
+        letter-spacing: 0.5px;
+        cursor: pointer;
         border-radius: 4px;
         transition: all 0.2s ease;
+        margin-top: 10px;
     }
 
         .btn-primary:hover {
@@ -138,26 +153,40 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-    .btn-secondary {
-        padding: 12px 30px;
-        border: 1px solid #d0d0d0;
-        background-color: #ffffff;
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
         color: #333333;
-        font-size: 15px;
+        text-decoration: none;
+        font-size: 14px;
         font-weight: 500;
-        border-radius: 4px;
-        transition: all 0.2s ease;
+        transition: color 0.2s ease;
     }
 
-        .btn-secondary:hover {
-            background-color: #f2f2f2;
+        .back-link:hover {
+            color: #1a1a1a;
+            text-decoration: underline;
         }
+
+    input[type="checkbox"] {
+        width: auto;
+    }
 
     .info-text {
         color: #666666;
         font-size: 12px;
         margin-top: 5px;
         font-style: italic;
+    }
+
+    /* TinyMCE Editor Styling */
+    .editor-container {
+        margin-bottom: 20px;
     }
 </style>
 
@@ -166,61 +195,82 @@
     <hr />
 
     <form method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="form-group">
-            <label asp-for="NewsArticle.NewsTitle"></label>
+            <label asp-for="NewsArticle.NewsTitle" class="control-label"></label>
             <input asp-for="NewsArticle.NewsTitle" class="form-control" />
             <span asp-validation-for="NewsArticle.NewsTitle" class="text-danger"></span>
         </div>
 
         <div class="form-group">
-            <label asp-for="NewsArticle.NewsContent"></label>
-            <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="5"></textarea>
+            <label asp-for="NewsArticle.Headline" class="control-label"></label>
+            <input asp-for="NewsArticle.Headline" class="form-control" />
+            <span asp-validation-for="NewsArticle.Headline" class="text-danger"></span>
+        </div>
+
+        <div class="form-group editor-container">
+            <label asp-for="NewsArticle.NewsContent" class="control-label"></label>
+            <textarea asp-for="NewsArticle.NewsContent" id="NewsContent" class="form-control"></textarea>
             <span asp-validation-for="NewsArticle.NewsContent" class="text-danger"></span>
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label asp-for="NewsArticle.CategoryId"></label>
-                    <select asp-for="NewsArticle.CategoryId" class="form-select" asp-items="ViewBag.CategoryId">
-                        <option value="">-- Select Category --</option>
-                    </select>
-                </div>
-            </div>
+        <div class="form-group">
+            <label asp-for="NewsArticle.NewsSource" class="control-label"></label>
+            <input asp-for="NewsArticle.NewsSource" class="form-control" />
+            <span asp-validation-for="NewsArticle.NewsSource" class="text-danger"></span>
+        </div>
 
-            <div class="col-md-6">
-                <div class="tags-section">
-                    <label>Tags</label>
-                    <div class="tags-container">
-                        @foreach (var tag in (IEnumerable<SelectListItem>)ViewBag.AllTags)
-                        {
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="selectedTags" value="@tag.Value" id="tag_@tag.Value" />
-                                <label class="form-check-label" for="tag_@tag.Value">@tag.Text</label>
-                            </div>
-                        }
+        <div class="form-group">
+            <label asp-for="NewsArticle.CategoryId" class="control-label"></label>
+            <select asp-for="NewsArticle.CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
+                <option value="">-- Select Category --</option>
+            </select>
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" asp-for="IsPublished" class="form-check-input" />
+            <label asp-for="IsPublished" class="form-check-label">Published</label>
+        </div>
+
+        <div class="tags-section">
+            <label>Tags</label>
+            <div class="tags-container">
+                @foreach (var tag in Model.AllTags)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               name="SelectedTags"
+                               value="@tag.Value"
+                               id="tag_@tag.Value"
+                               @(Model.SelectedTags.Contains(tag.Value) ? "checked" : "") />
+                        <label class="form-check-label" for="tag_@tag.Value">@tag.Text</label>
                     </div>
-                </div>
+                }
             </div>
         </div>
 
-        <div class="form-check mb-3">
-            <input class="form-check-input" asp-for="NewsArticle.NewsStatus" />
-            <label class="form-check-label" asp-for="NewsArticle.NewsStatus">
-                @Html.DisplayNameFor(model => model.NewsArticle.NewsStatus)
-            </label>
+        <div class="info-text">
+            <p><strong>Note:</strong> Created By, Created Date, Updated By, and Modified Date will be set automatically based on your account.</p>
         </div>
 
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">Create</button>
-            <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
         </div>
     </form>
+
+    <div>
+        <a asp-page="Index" class="back-link">← Back to List</a>
+    </div>
 </div>
 
 @section Scripts {
+    <script src="https://cdn.tiny.cloud/1/8z58i0v38v82sqpih257oapry732ny0oc3yt3wcx0zhwhimt/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#NewsContent'
+        });
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

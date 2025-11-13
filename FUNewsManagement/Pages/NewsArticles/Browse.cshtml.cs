@@ -36,28 +36,28 @@ namespace FUNewsManagement.Pages.NewsArticles
 
         public void OnGet()
         {
-            var articles = _newsService.GetNewsArticles();
+            var articles = _newsService.GetNewsArticles().Where(a => a.NewsStatus == true);
 
             // Apply filters
             if (SelectedCategory.HasValue)
             {
-                articles = articles.Where(a => a.CategoryId == SelectedCategory).ToList();
+                articles = articles.Where(a => a.CategoryId == SelectedCategory);
             }
 
             if (!string.IsNullOrEmpty(SearchTerm))
             {
-                articles = articles.Where(a => a.NewsTitle.Contains(SearchTerm) || a.NewsContent.Contains(SearchTerm)).ToList();
+                articles = articles.Where(a => a.NewsTitle.Contains(SearchTerm) || a.NewsContent.Contains(SearchTerm));
             }
 
             // Apply sorting
             articles = SortBy switch
             {
-                "oldest" => articles.OrderBy(a => a.CreatedDate).ToList(),
-                "title" => articles.OrderBy(a => a.NewsTitle).ToList(),
-                _ => articles.OrderByDescending(a => a.CreatedDate).ToList(),
+                "oldest" => articles.OrderBy(a => a.CreatedDate),
+                "title" => articles.OrderBy(a => a.NewsTitle),
+                _ => articles.OrderByDescending(a => a.CreatedDate),
             };
 
-            TotalCount = articles.Count;
+            TotalCount = articles.Count();
             NewsArticles = articles.Skip((Page - 1) * PageSize).Take(PageSize).ToList();
 
             Categories = new SelectList(_categoryService.GetCategorys(), "CategoryId", "CategoryDesciption");
