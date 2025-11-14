@@ -36,7 +36,9 @@ namespace FUNewsManagement.Pages.NewsArticles
 
         public void OnGet()
         {
-            var articles = _newsService.GetNewsArticles().Where(a => a.NewsStatus == true);
+            var articles = _newsService.GetNewsArticles()
+                .Where(a => a.NewsStatus == true
+                         && (a.NewsContent == null || !a.NewsContent.StartsWith("[ARCHIVED]")));
 
             // Apply filters
             if (SelectedCategory.HasValue)
